@@ -1,6 +1,6 @@
 import { useState } from 'react'
 
-export default function Login({ setIsLoggedIn }) {
+export default function Login({ setIsLoggedIn, setAccessToken }) {
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
     
@@ -30,6 +30,7 @@ export default function Login({ setIsLoggedIn }) {
 
         const data = await response.json()
         localStorage.setItem('access_token', data.access_token)
+        setAccessToken(data.access_token)
         setIsLoggedIn(true)
         } catch (error) {
         console.error('Error during login:', error)
