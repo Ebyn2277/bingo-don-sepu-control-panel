@@ -49,10 +49,7 @@ function App() {
       }
       const data = await response.json()
       console.log('Order validated successfully:', data)
-      setValidatingOrder({
-        ...validatingOrder,
-        payment_proof_validated: isValid
-      })
+      setValidatingOrder(data)
       // Refresh orders data after validation
       fetchOrdersData()
     } catch (error) {
