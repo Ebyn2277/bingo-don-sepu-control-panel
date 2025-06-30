@@ -13,6 +13,7 @@
   overflow-y: auto;
 
   ul {
+    width: calc(100% - 2rem);
     margin: 1rem;
 
     display: flex;
