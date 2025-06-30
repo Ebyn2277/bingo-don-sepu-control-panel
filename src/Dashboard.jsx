@@ -8,6 +8,7 @@ import OrderValidationModal from "./OrderValidationModal";
 function Dashboard() {
   const { accessToken, logout } = useContext(AuthContext);
   console.log(accessToken);
+
   const headers = useMemo(
     () => ({
       "Content-Type": "application/json",
