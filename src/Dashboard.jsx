@@ -43,16 +43,22 @@ function Dashboard() {
       if (!response.ok) {
         const errorData = await response.json();
         if (errorData.message) {
-          console.error("Validation error:", errorData.message);
           if (
-            errorData.status === 401 &&
+            response.status === 401 &&
             errorData.message === "Unauthenticated."
           ) {
+            console.error("User is unauthenticated, logging out.");
             logout();
             return;
           }
+
+          throw new Error(
+            "Failed to fetch data: ",
+            errorData.message,
+            response.status
+          );
         }
-        throw new Error("Failed to validate order");
+        throw new Error("Failed to fetch data:", errorData, response.status);
       }
 
       const data = await response.json();

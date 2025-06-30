@@ -12,17 +12,22 @@ function useFetch(url, fetchOptions = {}, dependencies = []) {
       if (!response.ok) {
         const errorData = await response.json();
         if (errorData.message) {
-          console.error("Fetch error:", errorData.message);
           if (
-            errorData.status === 401 &&
+            response.status === 401 &&
             errorData.message === "Unauthenticated."
           ) {
             console.error("User is unauthenticated, logging out.");
             logout();
             return;
           }
+
+          throw new Error(
+            "Failed to fetch data: ",
+            errorData.message,
+            response.status
+          );
         }
-        throw new Error("Failed to fetch data: " + errorData);
+        throw new Error("Failed to fetch data:", errorData, response.status);
       }
       const result = await response.json();
       setData(result);
