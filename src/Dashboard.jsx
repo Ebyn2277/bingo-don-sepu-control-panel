@@ -68,15 +68,18 @@ function Dashboard() {
     setValidatingOrder(order);
   };
 
-  const { data: paymentGatewayData, refetch: refetchPaymentGatewayData } =
-    useFetch(
-      "http://localhost:8000/api/payment-gateways/1",
-      {
-        method: "GET",
-        headers,
-      },
-      [accessToken]
-    );
+  const {
+    data: paymentGatewayData,
+    setData: setPaymentGatewayData,
+    refetch: refetchPaymentGatewayData,
+  } = useFetch(
+    "http://localhost:8000/api/payment-gateways/1",
+    {
+      method: "GET",
+      headers,
+    },
+    [accessToken]
+  );
 
   const { data: ticketsData, refetch: refetchTicketsData } = useFetch(
     "http://localhost:8000/api/tickets/data",
@@ -96,11 +99,6 @@ function Dashboard() {
     [accessToken]
   );
 
-  const fetchGeneralData = async () => {
-    await refetchPaymentGatewayData();
-    await refetchTicketsData();
-  };
-
   return (
     <>
       <div className="app-container">
@@ -110,7 +108,9 @@ function Dashboard() {
           availableTickets={ticketsData?.available_tickets_count || 0}
           totalTickets={ticketsData?.last_tickets_submitted_count || 0}
           paymentGatewayData={paymentGatewayData ?? null}
-          fetchGeneralData={fetchGeneralData}
+          setPaymentGatewayData={setPaymentGatewayData ?? null}
+          refetchTicketsData={refetchTicketsData}
+          refetchPaymentGatewayData={refetchPaymentGatewayData}
         />
 
         <OrdersSection

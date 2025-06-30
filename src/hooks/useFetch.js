@@ -36,7 +36,7 @@ function useFetch(url, fetchOptions = {}, dependencies = []) {
     fetchData();
   }, [fetchData]);
 
-  return { data, error, refetch: fetchData };
+  return { data, error, refetch: fetchData, setData };
 }
 
 export default useFetch;
