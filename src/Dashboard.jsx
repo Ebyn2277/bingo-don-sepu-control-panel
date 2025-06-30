@@ -64,8 +64,7 @@ function Dashboard() {
   };
 
   const handleClickShowValidatingModal = (order) => {
-    if (isValidating) return;
-    setIsValidating(true);
+    if (!isValidating) setIsValidating(true);
     setValidatingOrder(order);
   };
 

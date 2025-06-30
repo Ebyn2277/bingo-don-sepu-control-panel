@@ -33,13 +33,7 @@ function OrderValidationModal({
         <li>
           Comprobante de Pago:{" "}
           {validatingOrder.payment_proof_source_url ? (
-            <a
-              href={validatingOrder.payment_proof_source_url}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Ver Comprobante
-            </a>
+            <img src={`${validatingOrder.payment_proof_source_url}`}></img>
           ) : (
             "No disponible"
           )}
