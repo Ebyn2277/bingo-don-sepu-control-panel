@@ -109,7 +109,7 @@ function Dashboard() {
         <InfoSection
           availableTickets={ticketsData?.available_tickets_count || 0}
           totalTickets={ticketsData?.last_tickets_submitted_count || 0}
-          paymentGatewayStatus={paymentGatewayData?.enabled ?? "Desconocido"}
+          paymentGatewayData={paymentGatewayData ?? null}
           fetchGeneralData={fetchGeneralData}
         />
 
