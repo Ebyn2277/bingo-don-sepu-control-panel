@@ -1,12 +1,9 @@
-import { useContext, useState } from "react";
+import { useState, useContext } from "react";
 import { AuthContext } from "./context/AuthContext";
 
-function InfoSection({
-  availableTickets,
-  totalTickets,
+function PaymentGatewaySection({
   paymentGatewayData,
   setPaymentGatewayData,
-  refetchTicketsData,
   refetchPaymentGatewayData,
 }) {
   const { accessToken, logout } = useContext(AuthContext);
@@ -153,99 +150,73 @@ function InfoSection({
     console.log("datesOnChange");
     setEnabledUntil(e.target.value);
   };
-
   return (
-    <>
-      <section className="tickets-section">
-        <h2>Combos</h2>
-        <button id="refetchTicketsData" onClick={refetchTicketsData}>
-          Actualizar Datos
-        </button>
-        <ul id="info-container">
+    <section className="payment-gateway-section">
+      <h2>Pasarela de Pago</h2>
+      <button
+        id="refetchPaymentGatewayData"
+        onClick={refetchPaymentGatewayData}
+      >
+        Actualizar Datos
+      </button>
+      {paymentGatewayData ? (
+        <ul>
           <li>
-            Número de combos disponibles:{" "}
-            <span id="available-tickets">{availableTickets}</span> /{" "}
-            <span className="totalTickets">{totalTickets}</span>
+            Estado de la pasarela de pago:{" "}
+            <span id="payment-gateway-status">
+              {paymentGatewayData.enabled ? "Abierta" : "Cerrada"}
+            </span>
           </li>
+
+          {paymentGatewayData.enabled ? (
+            <li>
+              Pasarela abierta:
+              <br /> Desde{" "}
+              <span>{formatToLocalTime(paymentGatewayData.enabled_from)}</span>
+              <br /> Hasta{" "}
+              <span>{formatToLocalTime(paymentGatewayData.enabled_until)}</span>
+            </li>
+          ) : null}
+
           <li>
-            Número de combos vendidos:{" "}
-            <span id="sold-tickets">{totalTickets - availableTickets}</span> /{" "}
-            <span className="totalTickets">{totalTickets}</span>
+            {paymentGatewayData.enabled ? (
+              <>
+                <button onClick={handleClicktogglePaymentGatewayEnable}>
+                  Deshabilitar
+                </button>
+              </>
+            ) : !isEnablingPaymentGateway ? (
+              <button onClick={handleClicktogglePaymentGatewayEnable}>
+                Habilitar
+              </button>
+            ) : (
+              <div>
+                <form action="">
+                  <label htmlFor="">Desde</label>{" "}
+                  <input
+                    type="date"
+                    value={enabledFrom}
+                    onChange={handleOnChangeEnabledFrom}
+                  />
+                  <label htmlFor="">Hasta</label>
+                  <input
+                    type="date"
+                    value={enabledUntil}
+                    onChange={handleOnChangeEnabledUntil}
+                  />
+                  <button type="submit" onClick={handleClickOnSubmit}>
+                    Habilitar
+                  </button>
+                </form>
+              </div>
+            )}
           </li>
         </ul>
-      </section>
-
-      <section className="payment-gateway-section">
-        <h2>Pasarela de Pago</h2>
-        <button
-          id="refetchPaymentGatewayData"
-          onClick={refetchPaymentGatewayData}
-        >
-          Actualizar Datos
-        </button>
-        {paymentGatewayData ? (
-          <ul>
-            <li>
-              Estado de la pasarela de pago:{" "}
-              <span id="payment-gateway-status">
-                {paymentGatewayData.enabled ? "Abierta" : "Cerrada"}
-              </span>
-            </li>
-
-            {paymentGatewayData.enabled ? (
-              <li>
-                Pasarela abierta:
-                <br /> Desde{" "}
-                <span>
-                  {formatToLocalTime(paymentGatewayData.enabled_from)}
-                </span>
-                <br /> Hasta{" "}
-                <span>
-                  {formatToLocalTime(paymentGatewayData.enabled_until)}
-                </span>
-              </li>
-            ) : null}
-
-            <li>
-              {paymentGatewayData.enabled ? (
-                <>
-                  <button onClick={handleClicktogglePaymentGatewayEnable}>
-                    Deshabilitar
-                  </button>
-                </>
-              ) : !isEnablingPaymentGateway ? (
-                <button onClick={handleClicktogglePaymentGatewayEnable}>
-                  Habilitar
-                </button>
-              ) : (
-                <div>
-                  <form action="">
-                    <label htmlFor="">Desde</label>{" "}
-                    <input
-                      type="date"
-                      value={enabledFrom}
-                      onChange={handleOnChangeEnabledFrom}
-                    />
-                    <label htmlFor="">Hasta</label>
-                    <input
-                      type="date"
-                      value={enabledUntil}
-                      onChange={handleOnChangeEnabledUntil}
-                    />
-                    <button type="submit" onClick={handleClickOnSubmit}>
-                      Habilitar
-                    </button>
-                  </form>
-                </div>
-              )}
-            </li>
-          </ul>
-        ) : (
-          <div>No hay información de la pasarela de pago disponible.</div>
-        )}
-      </section>
-    </>
+      ) : (
+        <div>No hay información de la pasarela de pago disponible.</div>
+      )}
+    </section>
   );
 }
 
-export default InfoSection;
+export default PaymentGatewaySection;

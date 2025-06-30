@@ -1,9 +1,10 @@
 import { useState, useMemo, useContext } from "react";
 import { AuthContext } from "./context/AuthContext";
 import useFetch from "./hooks/useFetch";
-import InfoSection from "./InfoSection";
 import OrdersSection from "./OrdersSection";
 import OrderValidationModal from "./OrderValidationModal";
+import PaymentGatewaySection from "./PaymentGatewaySection";
+import TicketsSection from "./TicketsSection";
 
 function Dashboard() {
   const { accessToken, logout } = useContext(AuthContext);
@@ -111,12 +112,15 @@ function Dashboard() {
       <div className="app-container">
         <button onClick={logout}>Cerrar sesión</button>
 
-        <InfoSection
+        <TicketsSection
           availableTickets={ticketsData?.available_tickets_count || 0}
           totalTickets={ticketsData?.last_tickets_submitted_count || 0}
+          refetchTicketsData={refetchTicketsData}
+        />
+
+        <PaymentGatewaySection
           paymentGatewayData={paymentGatewayData ?? null}
           setPaymentGatewayData={setPaymentGatewayData ?? null}
-          refetchTicketsData={refetchTicketsData}
           refetchPaymentGatewayData={refetchPaymentGatewayData}
         />
 
