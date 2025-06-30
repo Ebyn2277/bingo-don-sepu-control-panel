@@ -1,3 +1,6 @@
+import "./Dashboard.css";
+import "./TicketsSection.css";
+
 function TicketsSection({
   availableTickets,
   totalTickets,
@@ -5,20 +8,24 @@ function TicketsSection({
 }) {
   return (
     <section className="tickets-section">
-      <h2>Combos</h2>
-      <button id="refetchTicketsData" onClick={refetchTicketsData}>
-        Actualizar Datos
-      </button>
+      <div className="section-header">
+        <h2>Combos</h2>
+        <button id="refetchTicketsData" onClick={refetchTicketsData}>
+          Actualizar
+        </button>
+      </div>
       <ul id="info-container">
         <li>
-          Número de combos disponibles:{" "}
-          <span id="available-tickets">{availableTickets}</span> /{" "}
-          <span className="totalTickets">{totalTickets}</span>
+          <p>Número de combos disponibles:</p>
+          <span>
+            {availableTickets} / {totalTickets}
+          </span>
         </li>
         <li>
-          Número de combos vendidos:{" "}
-          <span id="sold-tickets">{totalTickets - availableTickets}</span> /{" "}
-          <span className="totalTickets">{totalTickets}</span>
+          <p>Número de combos vendidos:</p>
+          <span>
+            {totalTickets - availableTickets} / {totalTickets}
+          </span>
         </li>
       </ul>
     </section>

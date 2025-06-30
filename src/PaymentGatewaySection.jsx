@@ -1,5 +1,7 @@
 import { useState, useContext } from "react";
 import { AuthContext } from "./context/AuthContext";
+import "./Dashboard.css";
+import "./PaymentGatewaySection.css";
 
 function PaymentGatewaySection({
   paymentGatewayData,
@@ -152,13 +154,15 @@ function PaymentGatewaySection({
   };
   return (
     <section className="payment-gateway-section">
-      <h2>Pasarela de Pago</h2>
-      <button
-        id="refetchPaymentGatewayData"
-        onClick={refetchPaymentGatewayData}
-      >
-        Actualizar Datos
-      </button>
+      <div className="section-header">
+        <h2>Pasarela de Pago</h2>
+        <button
+          id="refetchPaymentGatewayData"
+          onClick={refetchPaymentGatewayData}
+        >
+          Actualizar
+        </button>
+      </div>
       {paymentGatewayData ? (
         <ul>
           <li>
@@ -169,16 +173,24 @@ function PaymentGatewaySection({
           </li>
 
           {paymentGatewayData.enabled ? (
-            <li>
-              Pasarela abierta:
-              <br /> Desde{" "}
-              <span>{formatToLocalTime(paymentGatewayData.enabled_from)}</span>
-              <br /> Hasta{" "}
-              <span>{formatToLocalTime(paymentGatewayData.enabled_until)}</span>
+            <li id="enabled-dates">
+              <p>Pasarela abierta:</p>
+              <p>
+                Desde el
+                <span>
+                  {formatToLocalTime(paymentGatewayData.enabled_from)}
+                </span>
+              </p>
+              <p>
+                Hasta el
+                <span>
+                  {formatToLocalTime(paymentGatewayData.enabled_until)}
+                </span>
+              </p>
             </li>
           ) : null}
 
-          <li>
+          <li id="enabled-functions">
             {paymentGatewayData.enabled ? (
               <>
                 <button onClick={handleClicktogglePaymentGatewayEnable}>
@@ -187,28 +199,26 @@ function PaymentGatewaySection({
               </>
             ) : !isEnablingPaymentGateway ? (
               <button onClick={handleClicktogglePaymentGatewayEnable}>
-                Habilitar
+                HABILITAR
               </button>
             ) : (
-              <div>
-                <form action="">
-                  <label htmlFor="">Desde</label>{" "}
-                  <input
-                    type="date"
-                    value={enabledFrom}
-                    onChange={handleOnChangeEnabledFrom}
-                  />
-                  <label htmlFor="">Hasta</label>
-                  <input
-                    type="date"
-                    value={enabledUntil}
-                    onChange={handleOnChangeEnabledUntil}
-                  />
-                  <button type="submit" onClick={handleClickOnSubmit}>
-                    Habilitar
-                  </button>
-                </form>
-              </div>
+              <form action="">
+                <label htmlFor="">Desde el:</label>{" "}
+                <input
+                  type="date"
+                  value={enabledFrom}
+                  onChange={handleOnChangeEnabledFrom}
+                />
+                <label htmlFor="">Hasta el:</label>
+                <input
+                  type="date"
+                  value={enabledUntil}
+                  onChange={handleOnChangeEnabledUntil}
+                />
+                <button type="submit" onClick={handleClickOnSubmit}>
+                  HABILITAR
+                </button>
+              </form>
             )}
           </li>
         </ul>

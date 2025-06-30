@@ -1,3 +1,6 @@
+import "./Dashboard.css";
+import "./OrderValidationModal.css";
+
 function OrderValidationModal({
   validatingOrder,
   setIsValidating,
@@ -9,61 +12,94 @@ function OrderValidationModal({
   };
 
   return (
-    <div className="validating-modal">
-      <button className="close-button" onClick={handleOnClickCloseModal}>
-        Cerrar
-      </button>
-      <ul>
-        <li>Validando orden ID: {validatingOrder.id}</li>
-        <li>Nombre: {validatingOrder.user_name}</li>
-        <li>Número de Whatsapp: {validatingOrder.user_whatsapp}</li>
-        <li>Número de Cartones: {validatingOrder.ticket_count}</li>
-        <li>
-          Total Pagado: $
-          {(validatingOrder.ticket_count * pricePerTicket).toFixed(2)}
-        </li>
-        <li>
-          Fecha de Compra:{" "}
-          {new Date(validatingOrder.created_at).toLocaleDateString()}
-        </li>
-        <li>
-          Hora de Compra:{" "}
-          {new Date(validatingOrder.created_at).toLocaleTimeString()}
-        </li>
-        <li>
-          Comprobante de Pago:{" "}
-          {validatingOrder.payment_proof_source_url ? (
-            <img src={`${validatingOrder.payment_proof_source_url}`}></img>
-          ) : (
-            "No disponible"
-          )}
-        </li>
-        <li>
-          Estado de Validación:{" "}
-          {validatingOrder.payment_proof_validated === null
-            ? "Pendiente"
-            : validatingOrder.payment_proof_validated
-            ? "Valido"
-            : "No Valido"}
-        </li>
-      </ul>
-      <div className="validation-buttons-container">
-        <button
-          className="validate-confirm-button"
-          onClick={() => {
-            validateOrder(true);
-          }}
-        >
-          Es Valido
-        </button>
-        <button
-          className="validate-cancel-button"
-          onClick={() => {
-            validateOrder(false);
-          }}
-        >
-          No es Valido
-        </button>
+    <div className="validating-modal-container">
+      <div className="validating-modal">
+        <div className="section-header">
+          <h2>Validación de Compra</h2>
+          <button
+            className="close-modal-button"
+            onClick={handleOnClickCloseModal}
+          >
+            Cerrar
+          </button>
+        </div>
+
+        <ul>
+          <li>
+            ID de compra: <span>{validatingOrder.id}</span>
+          </li>
+          <li>
+            Nombre: <span>{validatingOrder.user_name}</span>
+          </li>
+          <li>
+            Número de Whatsapp: <span>{validatingOrder.user_whatsapp}</span>
+          </li>
+          <li>
+            Número de Cartones: <span>{validatingOrder.ticket_count}</span>
+          </li>
+          <li>
+            Total Pagado: $
+            <span>
+              {(validatingOrder.ticket_count * pricePerTicket).toFixed(2)}
+            </span>
+          </li>
+          <li>
+            Fecha de Compra:{" "}
+            <span>
+              {new Date(validatingOrder.created_at).toLocaleDateString()}
+            </span>
+          </li>
+          <li>
+            Hora de Compra:{" "}
+            <span>
+              {new Date(validatingOrder.created_at).toLocaleTimeString()}
+            </span>
+          </li>
+          <li id="payment-proof">
+            <p>Comprobante de Pago:</p>
+            {validatingOrder.payment_proof_source_url ? (
+              <img src={`${validatingOrder.payment_proof_source_url}`}></img>
+            ) : (
+              "No disponible"
+            )}
+          </li>
+          <li>
+            Estado de Validación:{" "}
+            <span
+              className={`${
+                validatingOrder.payment_proof_validated === null
+                  ? "pendiente"
+                  : validatingOrder.payment_proof_validated
+                  ? "valido"
+                  : "no-valido"
+              }`}
+            >
+              {validatingOrder.payment_proof_validated === null
+                ? "PENDIENTE"
+                : validatingOrder.payment_proof_validated
+                ? "VALIDO"
+                : "NO VALIDO"}
+            </span>
+          </li>
+        </ul>
+        <div className="validation-buttons-container">
+          <button
+            className="validate-confirm-button"
+            onClick={() => {
+              validateOrder(true);
+            }}
+          >
+            ES VALIDO
+          </button>
+          <button
+            className="validate-cancel-button"
+            onClick={() => {
+              validateOrder(false);
+            }}
+          >
+            NO ES VALIDO
+          </button>
+        </div>
       </div>
     </div>
   );

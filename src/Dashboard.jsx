@@ -5,6 +5,7 @@ import OrdersSection from "./OrdersSection";
 import OrderValidationModal from "./OrderValidationModal";
 import PaymentGatewaySection from "./PaymentGatewaySection";
 import TicketsSection from "./TicketsSection";
+import "./Dashboard.css";
 
 function Dashboard() {
   const { accessToken, logout } = useContext(AuthContext);
@@ -108,10 +109,11 @@ function Dashboard() {
   );
 
   return (
-    <>
-      <div className="app-container">
-        <button onClick={logout}>Cerrar sesión</button>
-
+    <div className="dashboard-container">
+      <button id="logoutButton" onClick={logout}>
+        CERRAR SESIÓN
+      </button>
+      <div className="dashboard">
         <TicketsSection
           availableTickets={ticketsData?.available_tickets_count || 0}
           totalTickets={ticketsData?.last_tickets_submitted_count || 0}
@@ -140,7 +142,7 @@ function Dashboard() {
           />
         )}
       </div>
-    </>
+    </div>
   );
 }
 

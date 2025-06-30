@@ -1,3 +1,6 @@
+import "./Dashboard.css";
+import "./OrdersSection.css";
+
 function OrdersSection({
   orders,
   pricePerTicket,
@@ -6,10 +9,12 @@ function OrdersSection({
 }) {
   return (
     <section className="orders-section">
-      <h2>Órdenes</h2>
-      <button id="refreshOrders" onClick={refetchOrdersData}>
-        Actualizar Ordenes
-      </button>
+      <div className="section-header">
+        <h2>Órdenes</h2>
+        <button id="refreshOrders" onClick={refetchOrdersData}>
+          Actualizar
+        </button>
+      </div>
       <table id="orders-table">
         <thead>
           <tr>
@@ -20,7 +25,6 @@ function OrdersSection({
             <th>Total Pagado</th>
             <th>Fecha de Compra</th>
             <th>Hora de Compra</th>
-            <th>Comprobante de Pago</th>
             <th>Estado de Validación</th>
           </tr>
         </thead>
@@ -36,21 +40,14 @@ function OrdersSection({
                 <td>{new Date(order.created_at).toLocaleDateString()}</td>
                 <td>{new Date(order.created_at).toLocaleTimeString()}</td>
                 <td>
-                  {order.payment_proof_source_url ? (
-                    <a
-                      href={order.payment_proof_source_url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      Ver Comprobante
-                    </a>
-                  ) : (
-                    "No disponible"
-                  )}
-                </td>
-                <td>
                   <button
-                    className="validate-button"
+                    className={`validate-button ${
+                      order.payment_proof_validated === null
+                        ? "pendiente"
+                        : order.payment_proof_validated
+                        ? "valido"
+                        : "no-valido"
+                    }`}
                     onClick={() => handleClickShowValidatingModal(order)}
                   >
                     {order.payment_proof_validated === null

@@ -1,0 +1,100 @@
+.validating-modal-container {
+  height: 100vh;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.validating-modal {
+  display: flex;
+  flex-direction: column;
+  align-items: end;
+  overflow-y: auto;
+
+  ul {
+    margin: 1rem;
+
+    display: flex;
+    flex-direction: column;
+  }
+
+  li {
+    padding: 0.4rem;
+
+    display: flex;
+    justify-content: space-between;
+
+    list-style: none;
+
+    &:nth-child(2n - 1) {
+      background-color: #333;
+    }
+  }
+
+  span {
+    font-weight: bold;
+  }
+}
+
+.close-modal-button {
+  width: fit-content;
+  padding: 0.5rem 1rem;
+}
+
+#payment-proof {
+  padding: 0;
+  padding-bottom: 0.4rem;
+
+  display: flex;
+  flex-direction: column;
+  align-items: start;
+
+  p {
+    padding: 0.4rem;
+    margin: 0;
+  }
+
+  img {
+    width: 100%;
+    aspect-ratio: 1 / 1;
+  }
+}
+
+.validation-buttons-container {
+  width: 100%;
+
+  margin-top: 0.8rem;
+  margin-bottom: 1.5rem;
+
+  display: flex;
+  justify-content: space-evenly;
+
+  button {
+    width: 130px;
+
+    padding: 0.5rem 0;
+
+    font-weight: bold;
+  }
+}
+
+.validate-confirm-button {
+  background-color: green;
+}
+
+.validate-cancel-button {
+  background-color: red;
+}
+
+.pendiente {
+  color: orange;
+}
+
+.valido {
+  color: green;
+}
+
+.no-valido {
+  color: red;
+}

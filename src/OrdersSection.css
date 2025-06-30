@@ -1,0 +1,15 @@
+#orders-table {
+  th {
+    padding: 0.2rem 0.5rem 0.8rem;
+    font-style: italic;
+    letter-spacing: 1px;
+  }
+
+  td {
+    padding: 0.2rem 0.5rem;
+  }
+}
+
+.validate-button {
+  width: 120px;
+}
