@@ -1,3 +1,12 @@
+.tickets-section span {
+  width: 40%;
+  padding: 0.2rem;
+  background-color: #111a;
+  border-radius: 10px;
+  font-size: 2rem;
+  font-weight: bold;
+}
+
 #info-container {
   margin: 1rem;
   display: flex;
@@ -11,13 +20,68 @@
     align-items: center;
     list-style: none;
   }
+}
 
-  span {
-    width: 40%;
-    padding: 0.2rem;
-    background-color: #111a;
+.upload-tickets-button {
+  width: calc(100% - 2rem);
+  margin-inline: 1rem;
+
+  font-weight: bold;
+  letter-spacing: 1px;
+}
+
+#upload-tickets-form {
+  width: 100%;
+  padding: 0 1rem 1rem;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.25rem;
+
+  label {
+    width: 100%;
+    padding-block: 0.8rem;
+
+    font-size: 1.5rem;
+    color: #888;
+    border: 3px dashed #888;
     border-radius: 10px;
-    font-size: 2rem;
+    cursor: pointer;
+  }
+
+  button {
+    width: 100%;
+
     font-weight: bold;
+    letter-spacing: 1px;
+  }
+}
+
+.label-disabled {
+  display: none;
+}
+
+.input-enabled {
+  padding-block: 0.8rem;
+
+  font-size: 1.5rem;
+  color: #888;
+}
+
+.input-disabled {
+  width: 20%;
+  height: 0;
+}
+
+.processing-tickets-state-container {
+  padding: 0 1rem 1rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  p {
+    font-weight: bold;
+    text-decoration: underline;
   }
 }

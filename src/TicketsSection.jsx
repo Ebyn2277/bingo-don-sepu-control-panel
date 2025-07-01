@@ -167,14 +167,16 @@ function TicketsSection({
             className="upload-tickets-button"
             onClick={handleClickUploadTickets}
           >
-            SUBIR COMBOS
+            Subir Combos
           </button>
         ) : (
           <form
             id="upload-tickets-form"
             onSubmit={handleOnSubmitUploadTicketsForm}
           >
-            <label for="tickets-file">Selecciona un archivo</label>
+            <label for="tickets-file" className={`${file && "label-disabled"}`}>
+              Selecciona un archivo
+            </label>
             <input
               id="tickets-file"
               type="file"
@@ -182,6 +184,9 @@ function TicketsSection({
               form="upload-tickets-form"
               ref={fileInputRef}
               required
+              className={`${
+                file && file !== "" ? "input-enabled" : "input-disabled"
+              }`}
               onChange={handleOnChangeTicketsFile}
             />
             <button
@@ -191,14 +196,14 @@ function TicketsSection({
               type="submit"
               form="upload-tickets-form"
             >
-              SUBIR
+              Subir
             </button>
           </form>
         ))}
 
       {isProcessingTickets && (
         <div className="processing-tickets-state-container">
-          Processando Tickets:{" "}
+          <p>Combos Subidos:</p>
           <span>
             {uploadedTicketsCount ?? 0} / {initialUnprocessedTicketsCount ?? 0}
           </span>
