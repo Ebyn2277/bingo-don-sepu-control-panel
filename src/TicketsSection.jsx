@@ -59,7 +59,7 @@ function TicketsSection({
             response.status
           );
         }
-        throw new Error("Failed to fetch data: ", errorData, response.status);
+        throw new Error(JSON.stringify(errorData));
       }
       const data = await response.json();
       console.log(data);
@@ -111,7 +111,7 @@ function TicketsSection({
             response.status
           );
         }
-        throw new Error("Failed to fetch data: ", errorData, response.status);
+        throw new Error(JSON.stringify(errorData));
       }
       const data = await response.json();
       const tempUnprocessedTicketsCount = data.pending_jobs;
