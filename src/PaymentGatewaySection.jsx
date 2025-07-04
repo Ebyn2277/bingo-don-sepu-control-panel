@@ -37,7 +37,7 @@ function PaymentGatewaySection({
   async function updatePaymentGatewayData(updatedPaymentGatewayData) {
     try {
       const response = await fetch(
-        "http://localhost:8000/api/payment-gateways/1",
+        "http://192.168.20.27:8000/api/payment-gateways/1",
         {
           method: "PUT",
           headers: {

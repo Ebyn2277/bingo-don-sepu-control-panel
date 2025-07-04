@@ -9,7 +9,7 @@ function AuthProvider({ children }) {
 
   const login = useCallback(async (email, password) => {
     try {
-      const response = await fetch("http://localhost:8000/api/login", {
+      const response = await fetch("http://192.168.20.27:8000/api/login", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -37,7 +37,7 @@ function AuthProvider({ children }) {
   const logout = useCallback(async () => {
     try {
       if (accessToken) {
-        const response = await fetch("http://localhost:8000/api/logout", {
+        const response = await fetch("http://192.168.20.27:8000/api/logout", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",

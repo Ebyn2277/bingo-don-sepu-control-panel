@@ -32,7 +32,7 @@ function Dashboard() {
 
     try {
       const response = await fetch(
-        `http://localhost:8000/api/orders/${updatedOrder.id}`,
+        `http://192.168.20.27:8000/api/orders/${updatedOrder.id}`,
         {
           method: "PUT",
           headers: {
@@ -82,7 +82,7 @@ function Dashboard() {
     setData: setPaymentGatewayData,
     refetch: refetchPaymentGatewayData,
   } = useFetch(
-    "http://localhost:8000/api/payment-gateways/1",
+    "http://192.168.20.27:8000/api/payment-gateways/1",
     {
       method: "GET",
       headers,
@@ -91,7 +91,7 @@ function Dashboard() {
   );
 
   const { data: ticketsData, refetch: refetchTicketsData } = useFetch(
-    "http://localhost:8000/api/tickets/data",
+    "http://192.168.20.27:8000/api/tickets/data",
     {
       method: "GET",
       headers,
@@ -100,7 +100,7 @@ function Dashboard() {
   );
 
   const { data: ordersData, refetch: refetchOrdersData } = useFetch(
-    "http://localhost:8000/api/orders",
+    "http://192.168.20.27:8000/api/orders",
     {
       method: "GET",
       headers,

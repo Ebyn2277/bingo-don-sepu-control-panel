@@ -33,14 +33,17 @@ function TicketsSection({
       formData.append("file", file);
       formData.append("invalidate_previous", invalidate_previous ? 1 : 0);
 
-      const response = await fetch("http://localhost:8000/api/tickets/upload", {
-        method: "POST",
-        headers: {
-          Accept: "application/json",
-          Authorization: `Bearer ${accessToken}`,
-        },
-        body: formData,
-      });
+      const response = await fetch(
+        "http://192.168.20.27:8000/api/tickets/upload",
+        {
+          method: "POST",
+          headers: {
+            Accept: "application/json",
+            Authorization: `Bearer ${accessToken}`,
+          },
+          body: formData,
+        }
+      );
       if (!response.ok) {
         const errorData = await response.json();
         if (errorData.message) {
@@ -83,7 +86,7 @@ function TicketsSection({
   const fetchProcessingTicketsState = async () => {
     try {
       const response = await fetch(
-        "http://localhost:8000/api/tickets/uploading-status",
+        "http://192.168.20.27:8000/api/tickets/uploading-status",
         {
           method: "GET",
           headers: {
