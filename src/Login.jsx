@@ -1,5 +1,6 @@
 import { useState, useContext } from "react";
 import { AuthContext } from "./context/AuthContext";
+import "./Login.css";
 
 export default function Login() {
   const { login } = useContext(AuthContext);
@@ -50,7 +51,7 @@ export default function Login() {
           />
         </div>
         {error && <p style={{ color: "red" }}>{error}</p>}
-        <button type="submit">Iniciar Sesión</button>
+        <button type="submit">INICIAR SESIÓN</button>
       </form>
     </div>
   );

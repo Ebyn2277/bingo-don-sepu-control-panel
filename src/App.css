@@ -3,6 +3,18 @@
   margin: 0 auto;
   padding: 2rem;
   text-align: center;
+  background-color: #242424;
+  color: #fffd;
+
+  input {
+    background-color: #111;
+    color: #fffd;
+  }
+
+  button {
+    background-color: #1a1a1a;
+    color: #fffd;
+  }
 }
 
 .logo {

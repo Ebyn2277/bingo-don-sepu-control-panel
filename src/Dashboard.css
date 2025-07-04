@@ -14,7 +14,7 @@
   width: fit-content;
   align-self: flex-end;
   font-weight: bold;
-  letter-spacing: 3px;
+  letter-spacing: 2px;
 }
 
 .payment-gateway-section,
@@ -28,6 +28,7 @@
 
 .tickets-section {
   margin-right: 1rem;
+  padding-bottom: 1rem;
 }
 
 .orders-section {
