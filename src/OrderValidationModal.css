@@ -62,7 +62,7 @@
   }
 }
 
-.validation-buttons-container {
+#validation-buttons-container {
   width: 100%;
 
   margin-top: 0.8rem;
@@ -80,11 +80,11 @@
   }
 }
 
-.validate-confirm-button {
+#validation-buttons-container > .validate-confirm-button {
   background-color: green;
 }
 
-.validate-cancel-button {
+#validation-buttons-container > .validate-cancel-button {
   background-color: red;
 }
 

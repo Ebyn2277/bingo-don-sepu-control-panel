@@ -82,7 +82,7 @@ function OrderValidationModal({
             </span>
           </li>
         </ul>
-        <div className="validation-buttons-container">
+        <div id="validation-buttons-container">
           <button
             className="validate-confirm-button"
             onClick={() => {
