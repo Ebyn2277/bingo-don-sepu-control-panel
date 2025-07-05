@@ -8,6 +8,18 @@
   td {
     padding: 0.2rem 0.5rem;
   }
+
+  .pendiente {
+    color: orange;
+  }
+
+  .valido {
+    color: green;
+  }
+
+  .no-valido {
+    color: red;
+  }
 }
 
 .validate-button {
@@ -29,4 +41,9 @@
   li {
     list-style: none;
   }
+}
+
+.tickets-container {
+  display: flex;
+  flex-direction: column;
 }
