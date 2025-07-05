@@ -1,3 +1,4 @@
+import { useState, useRef, useEffect } from "react";
 import "./Dashboard.css";
 import "./OrdersSection.css";
 
@@ -7,13 +8,52 @@ function OrdersSection({
   refetchOrdersData,
   handleClickShowValidatingModal,
 }) {
+  const [tableOrders, setTableOrders] = useState(orders);
+  const [searchParam, setSearchParam] = useState("");
+  const timeoutRef = useRef();
+
+  const handleOnChangeOrdersSearch = (e) => {
+    clearTimeout(timeoutRef.current);
+
+    timeoutRef.current = setTimeout(() => {
+      setSearchParam(e.target.value);
+    }, 500);
+  };
+
+  useEffect(() => {
+    setTableOrders(orders);
+  }, [orders]);
+
+  useEffect(() => {
+    const filteredOrders = orders?.filter(
+      (order) =>
+        order.user_whatsapp.includes(searchParam) ||
+        order.user_name.includes(searchParam)
+    );
+
+    setTableOrders(filteredOrders);
+  }, [searchParam]);
+
   return (
     <section className="orders-section">
       <div className="section-header">
         <h2>Órdenes</h2>
-        <button id="refreshOrders" onClick={refetchOrdersData}>
-          Actualizar
-        </button>
+        <ul id="header-elements-container">
+          <li>
+            <input
+              type="search"
+              name=""
+              id="orders-search"
+              placeholder="Buscar... (WhatsApp/Nombre)"
+              onChange={handleOnChangeOrdersSearch}
+            />
+          </li>
+          <li>
+            <button id="refreshOrders" onClick={refetchOrdersData}>
+              Actualizar
+            </button>
+          </li>
+        </ul>
       </div>
       <table id="orders-table">
         <thead>
@@ -29,8 +69,8 @@ function OrdersSection({
           </tr>
         </thead>
         <tbody>
-          {orders && orders.length > 0 ? (
-            orders.map((order) => (
+          {tableOrders && tableOrders.length > 0 ? (
+            tableOrders.map((order) => (
               <tr key={order.id}>
                 <td>{order.id}</td>
                 <td>{order.user_name}</td>

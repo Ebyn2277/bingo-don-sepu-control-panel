@@ -13,3 +13,20 @@
 .validate-button {
   width: 120px;
 }
+
+#orders-search {
+  width: 250px;
+  padding: 5px;
+  font-size: 1rem;
+  border-radius: 5px;
+}
+
+#header-elements-container {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+
+  li {
+    list-style: none;
+  }
+}
