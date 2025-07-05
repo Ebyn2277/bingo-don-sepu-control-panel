@@ -1,4 +1,4 @@
-import { useState, useContext } from "react";
+import { useState, useContext, useEffect } from "react";
 import { AuthContext } from "./context/AuthContext";
 import "./Dashboard.css";
 import "./PaymentGatewaySection.css";
@@ -12,18 +12,19 @@ function PaymentGatewaySection({
 
   const [enabledFrom, setEnabledFrom] = useState("");
   const [enabledUntil, setEnabledUntil] = useState("");
+  const [isPaymentGatewayEnabled, setIsPaymentGatewayEnabled] = useState(false);
 
   const formatToLocalTime = (utcTime) =>
     new Date(utcTime).toLocaleString("es-CO");
 
   const [isEnablingPaymentGateway, setIsEnablingPaymentGateway] = useState(
-    paymentGatewayData ? paymentGatewayData.enabled : null
+    paymentGatewayData ? isPaymentGatewayEnabled : null
   );
 
   const handleClicktogglePaymentGatewayEnable = async () => {
-    setIsEnablingPaymentGateway(!paymentGatewayData.enabled);
+    setIsEnablingPaymentGateway((prev) => !prev);
 
-    if (paymentGatewayData.enabled) {
+    if (isPaymentGatewayEnabled) {
       const updatedPaymentGatewayData = { name: paymentGatewayData.name };
       updatedPaymentGatewayData.enabled_from = null;
       updatedPaymentGatewayData.enabled_until = null;
@@ -33,6 +34,29 @@ function PaymentGatewaySection({
       updatePaymentGatewayData(updatedPaymentGatewayData);
     }
   };
+
+  useEffect(() => {
+    if (!paymentGatewayData) return;
+
+    if (!paymentGatewayData.enabled) {
+      setIsPaymentGatewayEnabled(false);
+      return;
+    }
+
+    let _enabledFrom = new Date(paymentGatewayData.enabled_from);
+    let _enabledUntil = new Date(paymentGatewayData.enabled_until);
+    let _currentTime = new Date();
+
+    if (
+      _enabledFrom.getTime() > _currentTime.getTime() ||
+      _currentTime.getTime() > _enabledUntil.getTime()
+    ) {
+      setIsPaymentGatewayEnabled(false);
+      return;
+    }
+
+    setIsPaymentGatewayEnabled(true);
+  }, [paymentGatewayData]);
 
   async function updatePaymentGatewayData(updatedPaymentGatewayData) {
     try {
@@ -106,8 +130,6 @@ function PaymentGatewaySection({
     const formattedDateEnableFrom = new Date(enabledFrom + "T00:00:00");
     const formattedDateEnabledUntil = new Date(enabledUntil + "T00:00:00");
 
-    console.log(formattedDateEnableFrom, formattedDateEnabledUntil);
-
     if (
       formattedDateEnableFrom.getTime() > formattedDateEnabledUntil.getTime()
     ) {
@@ -134,13 +156,9 @@ function PaymentGatewaySection({
     updatedPaymentGatewayData.enabled_until = formattedDateEnabledUntil;
     updatedPaymentGatewayData.enabled = true;
 
-    const isSuccessfull = await updatePaymentGatewayData(
-      updatedPaymentGatewayData
-    );
-
-    if (isSuccessfull) handleClicktogglePaymentGatewayEnable();
-
     handleClicktogglePaymentGatewayEnable();
+
+    updatePaymentGatewayData(updatedPaymentGatewayData);
   };
 
   const handleOnChangeEnabledFrom = (e) => {
@@ -168,30 +186,38 @@ function PaymentGatewaySection({
           <li>
             Estado de la pasarela de pago:{" "}
             <span id="payment-gateway-status">
-              {paymentGatewayData.enabled ? "Abierta" : "Cerrada"}
+              {isPaymentGatewayEnabled ? "Abierta" : "Cerrada"}
             </span>
           </li>
 
-          {paymentGatewayData.enabled ? (
-            <li id="enabled-dates">
-              <p>Pasarela abierta:</p>
-              <p>
-                Desde el
-                <span>
-                  {formatToLocalTime(paymentGatewayData.enabled_from)}
-                </span>
-              </p>
-              <p>
-                Hasta el
-                <span>
-                  {formatToLocalTime(paymentGatewayData.enabled_until)}
-                </span>
-              </p>
-            </li>
-          ) : null}
+          {paymentGatewayData.enabled_from &&
+            paymentGatewayData.enabled_until && (
+              <li id="enabled-dates">
+                <p>
+                  {isPaymentGatewayEnabled
+                    ? "Pasarela abierta..."
+                    : new Date().getTime() >
+                      new Date(paymentGatewayData.enabled_until).getTime()
+                    ? "La pasarela se abrió..."
+                    : "La pasarela se abrirá..."}
+                </p>
+                <p>
+                  ...desde el
+                  <span>
+                    {formatToLocalTime(paymentGatewayData.enabled_from)}
+                  </span>
+                </p>
+                <p>
+                  ...hasta el
+                  <span>
+                    {formatToLocalTime(paymentGatewayData.enabled_until)}
+                  </span>
+                </p>
+              </li>
+            )}
 
           <li id="enabled-functions">
-            {paymentGatewayData.enabled ? (
+            {isPaymentGatewayEnabled ? (
               <>
                 <button onClick={handleClicktogglePaymentGatewayEnable}>
                   Deshabilitar
@@ -199,7 +225,10 @@ function PaymentGatewaySection({
               </>
             ) : !isEnablingPaymentGateway ? (
               <button onClick={handleClicktogglePaymentGatewayEnable}>
-                HABILITAR
+                {paymentGatewayData.enabled_from &&
+                paymentGatewayData.enabled_until
+                  ? "Cambiar fechas hábiles"
+                  : "Habilitar"}
               </button>
             ) : (
               <form action="">
@@ -216,7 +245,7 @@ function PaymentGatewaySection({
                   onChange={handleOnChangeEnabledUntil}
                 />
                 <button type="submit" onClick={handleClickOnSubmit}>
-                  HABILITAR
+                  Habilitar
                 </button>
               </form>
             )}
