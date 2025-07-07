@@ -56,7 +56,7 @@
   background-color: #111;
   border-bottom: 2px solid #111;
 
-  > button {
+  button {
     height: 40px;
     background: none;
     letter-spacing: 1px;
