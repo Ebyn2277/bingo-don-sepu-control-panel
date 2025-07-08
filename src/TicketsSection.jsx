@@ -1,32 +1,28 @@
 import { AuthContext } from "./context/AuthContext";
 import "./Dashboard.css";
-import "./TicketsSection.css";
+import "./SheetsSection.css";
 import { useContext, useState, useRef, useEffect } from "react";
 
-function TicketsSection({
-  availableTickets,
-  totalTickets,
-  refetchTicketsData,
-}) {
+function SheetsSection({ availableSheets, totalSheets, refetchSheetsData }) {
   const { accessToken, logout } = useContext(AuthContext);
-  const [isUploadingTickets, setIsUploadingTickets] = useState(false);
+  const [isUploadingSheets, setIsUploadingSheets] = useState(false);
   const [file, setFile] = useState(null);
   const [invalidate_previous, setInvalidatePrevious] = useState(true);
-  const [isProcessingTickets, setIsProcessingTickets] = useState(false);
-  const [initialUnprocessedTicketsCount, setInitialUnprocessedTicketsCount] =
+  const [isProcessingSheets, setIsProcessingSheets] = useState(false);
+  const [initialUnprocessedSheetsCount, setInitialUnprocessedSheetsCount] =
     useState(null);
-  const [uploadedTicketsCount, setUploadedTicketsCount] = useState(null);
+  const [uploadedSheetsCount, setUploadedSheetsCount] = useState(null);
   const fileInputRef = useRef(null);
 
-  const handleClickUploadTickets = () => {
-    setIsUploadingTickets(true);
+  const handleClickUploadSheets = () => {
+    setIsUploadingSheets(true);
   };
 
-  const handleOnChangeTicketsFile = (e) => {
+  const handleOnChangeSheetsFile = (e) => {
     setFile(e.target.files[0]);
   };
 
-  const handleOnSubmitUploadTicketsForm = async (e) => {
+  const handleOnSubmitUploadSheetsForm = async (e) => {
     e.preventDefault();
     try {
       const formData = new FormData();
@@ -34,7 +30,7 @@ function TicketsSection({
       formData.append("invalidate_previous", invalidate_previous ? 1 : 0);
 
       const response = await fetch(
-        "http://192.168.20.27:8000/api/tickets/upload",
+        "http://192.168.20.27:8000/api/sheets/upload",
         {
           method: "POST",
           headers: {
@@ -66,27 +62,27 @@ function TicketsSection({
       }
       const data = await response.json();
       console.log(data);
-      setIsProcessingTickets(true);
-      setIsUploadingTickets(false);
+      setIsProcessingSheets(true);
+      setIsUploadingSheets(false);
       if (!invalidate_previous) setInvalidatePrevious(true);
       if (fileInputRef.current) {
         fileInputRef.current.value = "";
       }
 
-      setInitialUnprocessedTicketsCount(data.tickets_count);
+      setInitialUnprocessedSheetsCount(data.sheets_count);
     } catch (error) {
       console.error(error);
     }
   };
 
   useEffect(() => {
-    initialUnprocessedTicketsCount !== null && fetchProcessingTicketsState();
-  }, [initialUnprocessedTicketsCount]);
+    initialUnprocessedSheetsCount !== null && fetchProcessingSheetsState();
+  }, [initialUnprocessedSheetsCount]);
 
-  const fetchProcessingTicketsState = async () => {
+  const fetchProcessingSheetsState = async () => {
     try {
       const response = await fetch(
-        "http://192.168.20.27:8000/api/tickets/uploading-status",
+        "http://192.168.20.27:8000/api/sheets/uploading-status",
         {
           method: "GET",
           headers: {
@@ -117,33 +113,33 @@ function TicketsSection({
         throw new Error(JSON.stringify(errorData));
       }
       const data = await response.json();
-      const tempUnprocessedTicketsCount = data.pending_jobs;
-      const tempUploadedTicketsCount =
-        initialUnprocessedTicketsCount - tempUnprocessedTicketsCount;
+      const tempUnprocessedSheetsCount = data.pending_jobs;
+      const tempUploadedSheetsCount =
+        initialUnprocessedSheetsCount - tempUnprocessedSheetsCount;
 
-      setUploadedTicketsCount(tempUploadedTicketsCount);
+      setUploadedSheetsCount(tempUploadedSheetsCount);
 
-      if (tempUnprocessedTicketsCount > 0) {
+      if (tempUnprocessedSheetsCount > 0) {
         await new Promise((resolve) => setTimeout(resolve, 1000));
-        fetchProcessingTicketsState();
+        fetchProcessingSheetsState();
       } else {
-        setInitialUnprocessedTicketsCount(null);
-        setUploadedTicketsCount(null);
-        setIsProcessingTickets(false);
-        await refetchTicketsData();
+        setInitialUnprocessedSheetsCount(null);
+        setUploadedSheetsCount(null);
+        setIsProcessingSheets(false);
+        await refetchSheetsData();
       }
     } catch (error) {
       console.error(error);
     }
   };
   return (
-    <section className="tickets-section">
+    <section className="sheets-section">
       <div className="section-header">
         <h2>Combos</h2>
         <button
-          id="refetchTicketsData"
+          id="refetchSheetsData"
           onClick={async () => {
-            await refetchTicketsData();
+            await refetchSheetsData();
           }}
         >
           Actualizar
@@ -153,62 +149,62 @@ function TicketsSection({
         <li>
           <p>Número de combos disponibles:</p>
           <span>
-            {availableTickets} / {totalTickets}
+            {availableSheets} / {totalSheets}
           </span>
         </li>
         <li>
           <p>Número de combos vendidos:</p>
           <span>
-            {totalTickets - availableTickets} / {totalTickets}
+            {totalSheets - availableSheets} / {totalSheets}
           </span>
         </li>
       </ul>
 
-      {!isProcessingTickets &&
-        (!isUploadingTickets ? (
+      {!isProcessingSheets &&
+        (!isUploadingSheets ? (
           <button
-            className="upload-tickets-button"
-            onClick={handleClickUploadTickets}
+            className="upload-sheets-button"
+            onClick={handleClickUploadSheets}
           >
             Subir Combos
           </button>
         ) : (
           <form
-            id="upload-tickets-form"
-            onSubmit={handleOnSubmitUploadTicketsForm}
+            id="upload-sheets-form"
+            onSubmit={handleOnSubmitUploadSheetsForm}
           >
-            <label for="tickets-file" className={`${file && "label-disabled"}`}>
+            <label for="sheets-file" className={`${file && "label-disabled"}`}>
               Selecciona un archivo
             </label>
             <input
-              id="tickets-file"
+              id="sheets-file"
               type="file"
               accept=".pdf"
-              form="upload-tickets-form"
+              form="upload-sheets-form"
               ref={fileInputRef}
               required
               className={`${
                 file && file !== "" ? "input-enabled" : "input-disabled"
               }`}
-              onChange={handleOnChangeTicketsFile}
+              onChange={handleOnChangeSheetsFile}
             />
             <button
-              className={`confirm-upload-tickets-button ${
+              className={`confirm-upload-sheets-button ${
                 file ? "enabled" : "disabled"
               }`}
               type="submit"
-              form="upload-tickets-form"
+              form="upload-sheets-form"
             >
               Subir
             </button>
           </form>
         ))}
 
-      {isProcessingTickets && (
-        <div className="processing-tickets-state-container">
+      {isProcessingSheets && (
+        <div className="processing-sheets-state-container">
           <p>Combos Subidos:</p>
           <span>
-            {uploadedTicketsCount ?? 0} / {initialUnprocessedTicketsCount ?? 0}
+            {uploadedSheetsCount ?? 0} / {initialUnprocessedSheetsCount ?? 0}
           </span>
         </div>
       )}
@@ -216,4 +212,4 @@ function TicketsSection({
   );
 }
 
-export default TicketsSection;
+export default SheetsSection;

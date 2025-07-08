@@ -4,7 +4,7 @@ import useFetch from "./hooks/useFetch";
 import OrdersSection from "./OrdersSection";
 import OrderValidationModal from "./OrderValidationModal";
 import PaymentGatewaySection from "./PaymentGatewaySection";
-import TicketsSection from "./TicketsSection";
+import SheetsSection from "./SheetsSection";
 import "./Dashboard.css";
 
 function Dashboard() {
@@ -90,8 +90,8 @@ function Dashboard() {
     [accessToken]
   );
 
-  const { data: ticketsData, refetch: refetchTicketsData } = useFetch(
-    "http://192.168.20.27:8000/api/tickets/data",
+  const { data: sheetsData, refetch: refetchSheetsData } = useFetch(
+    "http://192.168.20.27:8000/api/sheets/data",
     {
       method: "GET",
       headers,
@@ -114,10 +114,10 @@ function Dashboard() {
         CERRAR SESIÓN
       </button>
       <div className="dashboard">
-        <TicketsSection
-          availableTickets={ticketsData?.available_tickets_count || 0}
-          totalTickets={ticketsData?.last_tickets_submitted_count || 0}
-          refetchTicketsData={refetchTicketsData}
+        <SheetsSection
+          availableSheets={sheetsData?.available_sheets_count || 0}
+          totalSheets={sheetsData?.last_sheets_submitted_count || 0}
+          refetchSheetsData={refetchSheetsData}
         />
 
         <PaymentGatewaySection
@@ -128,7 +128,7 @@ function Dashboard() {
 
         <OrdersSection
           orders={ordersData}
-          pricePerTicket={paymentGatewayData?.ticket_price || 0}
+          pricePerSheet={paymentGatewayData?.sheet_price || 0}
           refetchOrdersData={refetchOrdersData}
           handleClickShowValidatingModal={handleClickShowValidatingModal}
         />
@@ -137,7 +137,7 @@ function Dashboard() {
           <OrderValidationModal
             validatingOrder={validatingOrder}
             setIsValidating={setIsValidating}
-            pricePerTicket={paymentGatewayData?.ticket_price || 0}
+            pricePerSheet={paymentGatewayData?.sheet_price || 0}
             validateOrder={validateOrder}
           />
         )}

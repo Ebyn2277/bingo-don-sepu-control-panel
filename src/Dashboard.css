@@ -19,14 +19,14 @@
 
 .payment-gateway-section,
 .validating-modal-container,
-.tickets-section,
+.sheets-section,
 .orders-section {
   border: 2px solid #111;
   background-color: #222;
   opacity: 0.9;
 }
 
-.tickets-section {
+.sheets-section {
   margin-right: 1rem;
   padding-bottom: 1rem;
 }

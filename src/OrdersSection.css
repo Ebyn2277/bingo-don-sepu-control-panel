@@ -47,7 +47,7 @@
   }
 }
 
-.tickets-container {
+.sheets-container {
   display: flex;
   flex-direction: column;
 }

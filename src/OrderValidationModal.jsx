@@ -4,7 +4,7 @@ import "./OrderValidationModal.css";
 function OrderValidationModal({
   validatingOrder,
   setIsValidating,
-  pricePerTicket,
+  pricePerSheet,
   validateOrder,
 }) {
   const handleOnClickCloseModal = () => {
@@ -35,12 +35,12 @@ function OrderValidationModal({
             Número de Whatsapp: <span>{validatingOrder.user_whatsapp}</span>
           </li>
           <li>
-            Número de Cartones: <span>{validatingOrder.ticket_count}</span>
+            Número de Cartones: <span>{validatingOrder.sheet_count}</span>
           </li>
           <li>
             Total Pagado: $
             <span>
-              {(validatingOrder.ticket_count * pricePerTicket).toFixed(2)}
+              {(validatingOrder.sheet_count * pricePerSheet).toFixed(2)}
             </span>
           </li>
           <li>

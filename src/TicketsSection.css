@@ -1,4 +1,4 @@
-.tickets-section span {
+.sheets-section span {
   width: 40%;
   padding: 0.2rem;
   background-color: #111a;
@@ -22,7 +22,7 @@
   }
 }
 
-.upload-tickets-button {
+.upload-sheets-button {
   width: calc(100% - 2rem);
   margin-inline: 1rem;
 
@@ -30,7 +30,7 @@
   letter-spacing: 1px;
 }
 
-#upload-tickets-form {
+#upload-sheets-form {
   width: 100%;
   padding: 0 1rem 1rem;
 
@@ -74,7 +74,7 @@
   height: 0;
 }
 
-.processing-tickets-state-container {
+.processing-sheets-state-container {
   padding: 0 1rem 1rem;
   display: flex;
   justify-content: space-between;

@@ -4,7 +4,7 @@ import "./OrdersSection.css";
 
 function OrdersSection({
   orders,
-  pricePerTicket,
+  pricePerSheet,
   refetchOrdersData,
   handleClickShowValidatingModal,
 }) {
@@ -78,19 +78,19 @@ function OrdersSection({
                   <td>{order.id}</td>
                   <td>{order.user_name}</td>
                   <td>{order.user_whatsapp}</td>
-                  <td>{order.ticket_count}</td>
-                  <td className="tickets-container">
-                    {order.tickets.map((value, index) => (
+                  <td>{order.sheet_count}</td>
+                  <td className="sheets-container">
+                    {order.sheets.map((value, index) => (
                       <a
                         href={value.source_url}
                         target="_blank"
                         rel="noopener noreferrer"
                       >
-                        Ticket {index + 1}
+                        Sheet {index + 1}
                       </a>
                     ))}
                   </td>
-                  <td>${(order.ticket_count * pricePerTicket).toFixed(2)}</td>
+                  <td>${(order.sheet_count * pricePerSheet).toFixed(2)}</td>
                   <td>{new Date(order.created_at).toLocaleDateString()}</td>
                   <td>{new Date(order.created_at).toLocaleTimeString()}</td>
                   <td>
