@@ -1,24 +1,46 @@
 import { AuthContext } from "./context/AuthContext";
 import "./Dashboard.css";
 import "./SheetsSection.css";
-import { useContext, useState, useRef, useEffect } from "react";
+import { useContext, useState, useRef, useEffect, useMemo } from "react";
+import useFetch from "./hooks/useFetch";
 
-function SheetsSection({
-  availableSheets,
-  totalSheets,
-  refetchSheetsData,
-  setIsSearchTicketModalOpen,
-}) {
+function SheetsSection({ setIsSearchTicketModalOpen }) {
   const { accessToken, logout } = useContext(AuthContext);
   const [isUploadingSheets, setIsUploadingSheets] = useState(false);
   const [file, setFile] = useState(null);
   const [firstTicketId, setFirstTicketId] = useState(0);
-  const [invalidate_previous, setInvalidatePrevious] = useState(true);
+  const [shouldInvalidatePrevious, setShouldInvalidatePrevious] =
+    useState(true);
   const [isProcessingSheets, setIsProcessingSheets] = useState(false);
   const [initialUnprocessedSheetsCount, setInitialUnprocessedSheetsCount] =
     useState(null);
   const [uploadedSheetsCount, setUploadedSheetsCount] = useState(null);
   const fileInputRef = useRef(null);
+  const [availableSheets, setAvailableSheets] = useState(null);
+  const [totalSheets, setTotalSheets] = useState(null);
+
+  const headers = useMemo(
+    () => ({
+      "Content-Type": "application/json",
+      Accept: "application/json",
+      Authorization: `Bearer ${accessToken}`,
+    }),
+    [accessToken]
+  );
+
+  const { data: sheetsData, refetch: refetchSheetsData } = useFetch(
+    "http://192.168.20.27:8000/api/sheets/data",
+    {
+      method: "GET",
+      headers,
+    },
+    [accessToken]
+  );
+
+  useEffect(() => {
+    setAvailableSheets(sheetsData?.available_sheets_count ?? 0);
+    setTotalSheets(sheetsData?.last_sheets_submitted_count ?? 0);
+  }, [sheetsData]);
 
   const handleClickUploadSheets = () => {
     setIsUploadingSheets(true);
@@ -33,7 +55,7 @@ function SheetsSection({
   };
 
   const handleOnChangeFirstTicetId = (e) => {
-    setFirstTicketId(e.target.value);
+    setFirstTicketId(parseInt(e.target.value));
   };
 
   const handleOnSubmitUploadSheetsForm = async (e) => {
@@ -41,7 +63,7 @@ function SheetsSection({
     try {
       const formData = new FormData();
       formData.append("file", file);
-      formData.append("invalidate_previous", invalidate_previous ? 1 : 0);
+      formData.append("invalidate_previous", shouldInvalidatePrevious ? 1 : 0);
       formData.append("first_ticket_id", firstTicketId);
 
       const response = await fetch(
@@ -79,7 +101,7 @@ function SheetsSection({
       console.log(data);
       setIsProcessingSheets(true);
       setIsUploadingSheets(false);
-      if (!invalidate_previous) setInvalidatePrevious(true);
+      if (!shouldInvalidatePrevious) setShouldInvalidatePrevious(true);
       if (fileInputRef.current) {
         fileInputRef.current.value = "";
       }
@@ -100,11 +122,7 @@ function SheetsSection({
         "http://192.168.20.27:8000/api/sheets/uploading-status",
         {
           method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-            Accept: "application/json",
-            Authorization: `Bearer ${accessToken}`,
-          },
+          headers,
         }
       );
       if (!response.ok) {
@@ -147,6 +165,7 @@ function SheetsSection({
       console.error(error);
     }
   };
+
   return (
     <section className="sheets-section">
       <div className="section-header">
