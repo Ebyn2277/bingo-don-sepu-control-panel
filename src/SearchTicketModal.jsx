@@ -32,6 +32,10 @@ function SearchTicketModal({ setIsSearchTicketModalOpen }) {
 
   const handleOnChangeSearchInput = (e) => {
     setSearchParam(e.target.value);
+
+    if (e.target.value.length === 0) {
+      setSearchResults(null); // Disable results' table when searchParam is clear
+    }
   };
 
   const handleClickSearchTicketButton = () => {
