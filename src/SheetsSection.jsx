@@ -3,10 +3,16 @@ import "./Dashboard.css";
 import "./SheetsSection.css";
 import { useContext, useState, useRef, useEffect } from "react";
 
-function SheetsSection({ availableSheets, totalSheets, refetchSheetsData }) {
+function SheetsSection({
+  availableSheets,
+  totalSheets,
+  refetchSheetsData,
+  setIsSearchTicketModalOpen,
+}) {
   const { accessToken, logout } = useContext(AuthContext);
   const [isUploadingSheets, setIsUploadingSheets] = useState(false);
   const [file, setFile] = useState(null);
+  const [firstTicketId, setFirstTicketId] = useState(0);
   const [invalidate_previous, setInvalidatePrevious] = useState(true);
   const [isProcessingSheets, setIsProcessingSheets] = useState(false);
   const [initialUnprocessedSheetsCount, setInitialUnprocessedSheetsCount] =
@@ -18,8 +24,16 @@ function SheetsSection({ availableSheets, totalSheets, refetchSheetsData }) {
     setIsUploadingSheets(true);
   };
 
+  const handleClickOpenSearchModal = () => {
+    setIsSearchTicketModalOpen(true);
+  };
+
   const handleOnChangeSheetsFile = (e) => {
     setFile(e.target.files[0]);
+  };
+
+  const handleOnChangeFirstTicetId = (e) => {
+    setFirstTicketId(e.target.value);
   };
 
   const handleOnSubmitUploadSheetsForm = async (e) => {
@@ -28,6 +42,7 @@ function SheetsSection({ availableSheets, totalSheets, refetchSheetsData }) {
       const formData = new FormData();
       formData.append("file", file);
       formData.append("invalidate_previous", invalidate_previous ? 1 : 0);
+      formData.append("first_ticket_id", firstTicketId);
 
       const response = await fetch(
         "http://192.168.20.27:8000/api/sheets/upload",
@@ -162,18 +177,38 @@ function SheetsSection({ availableSheets, totalSheets, refetchSheetsData }) {
 
       {!isProcessingSheets &&
         (!isUploadingSheets ? (
-          <button
-            className="upload-sheets-button"
-            onClick={handleClickUploadSheets}
-          >
-            Subir Combos
-          </button>
+          <div className="sheet-actions">
+            <button
+              className="upload-sheets-button"
+              onClick={handleClickUploadSheets}
+            >
+              Subir
+            </button>
+            <button
+              className="open-search-modal-button"
+              onClick={handleClickOpenSearchModal}
+            >
+              Buscar
+            </button>
+          </div>
         ) : (
           <form
             id="upload-sheets-form"
             onSubmit={handleOnSubmitUploadSheetsForm}
           >
-            <label for="sheets-file" className={`${file && "label-disabled"}`}>
+            <label for="sheets-first-ticket-id">ID del primer cartón:</label>
+            <input
+              id="sheets-first-ticket-id"
+              type="number"
+              onChange={handleOnChangeFirstTicetId}
+              min={1}
+              required
+            />
+            <label
+              id="file-label"
+              for="sheets-file"
+              className={`${file && "label-disabled"}`}
+            >
               Selecciona un archivo
             </label>
             <input

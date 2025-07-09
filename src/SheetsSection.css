@@ -22,44 +22,66 @@
   }
 }
 
-.upload-sheets-button {
-  width: calc(100% - 2rem);
+.sheet-actions {
+  display: flex;
   margin-inline: 1rem;
+  gap: 1rem;
+  justify-content: center;
 
-  font-weight: bold;
-  letter-spacing: 1px;
+  button {
+    width: 100%;
+    font-weight: bold;
+    letter-spacing: 1px;
+  }
 }
 
 #upload-sheets-form {
   width: 100%;
   padding: 0 1rem 1rem;
 
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 0.25rem;
+  display: grid;
+  grid-template-columns: 30% 70%;
+  gap: 0.5rem;
 
   label {
     width: 100%;
     padding-block: 0.8rem;
-
-    font-size: 1.5rem;
-    color: #888;
-    border: 3px dashed #888;
-    border-radius: 10px;
-    cursor: pointer;
+    text-align: start;
   }
 
   button {
-    width: 100%;
-
+    grid-column: span 2;
     font-weight: bold;
     letter-spacing: 1px;
+  }
+
+  input {
+    padding-inline: 5px;
+    background-color: transparent;
+    border-radius: 5px;
+    border-width: 3px;
+    text-align: center;
+    font-size: 2rem;
+    font-weight: bold;
   }
 }
 
 .label-disabled {
   display: none;
+}
+
+#upload-sheets-form #file-label {
+  grid-column: span 2;
+  font-size: 1.5rem;
+  text-align: center;
+  color: #888;
+  border: 3px dashed #888;
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+#sheets-file {
+  grid-column: 2;
 }
 
 .input-enabled {

@@ -5,10 +5,12 @@ import OrdersSection from "./OrdersSection";
 import OrderValidationModal from "./OrderValidationModal";
 import PaymentGatewaySection from "./PaymentGatewaySection";
 import SheetsSection from "./SheetsSection";
+import SearchTicketModal from "./SearchTicketModal";
 import "./Dashboard.css";
 
 function Dashboard() {
   const { accessToken, logout } = useContext(AuthContext);
+  const [isSearchTicketModalOpen, setIsSearchTicketModalOpen] = useState(false);
   console.log(accessToken);
 
   const headers = useMemo(
@@ -108,7 +110,11 @@ function Dashboard() {
     [accessToken]
   );
 
-  return (
+  return isSearchTicketModalOpen ? (
+    <SearchTicketModal
+      setIsSearchTicketModalOpen={setIsSearchTicketModalOpen}
+    />
+  ) : (
     <div className="dashboard-container">
       <button id="logoutButton" onClick={logout}>
         CERRAR SESIÓN
@@ -118,6 +124,7 @@ function Dashboard() {
           availableSheets={sheetsData?.available_sheets_count || 0}
           totalSheets={sheetsData?.last_sheets_submitted_count || 0}
           refetchSheetsData={refetchSheetsData}
+          setIsSearchTicketModalOpen={setIsSearchTicketModalOpen}
         />
 
         <PaymentGatewaySection

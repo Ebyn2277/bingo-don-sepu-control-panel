@@ -1,0 +1,70 @@
+.search-ticket-modal {
+  width: 600px;
+
+  border: solid 4px #0006;
+  border-radius: 50px;
+  background-color: #111;
+  box-shadow: 0 0 100px #ff02;
+}
+
+.modal-header {
+  padding: 2rem 2rem 1rem;
+  display: flex;
+  justify-content: space-between;
+
+  background-color: #0006;
+  border-top-left-radius: 46px;
+  border-top-right-radius: 46px;
+
+  button {
+    font-weight: bold;
+    letter-spacing: 2px;
+    text-decoration: underline;
+    background-color: transparent;
+  }
+}
+
+.modal-body {
+  margin: 2rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 2rem;
+}
+
+.search-actions {
+  display: flex;
+  gap: 1rem;
+
+  button {
+    font-weight: bold;
+    letter-spacing: 2px;
+  }
+}
+
+#search-ticket-input {
+  width: 100%;
+  padding: 0.5rem;
+  border-radius: 10px;
+  font-size: 2rem;
+  text-align: center;
+  letter-spacing: 100%;
+}
+
+.result-message {
+  padding: 0.5rem;
+  font-size: 1.2rem;
+  letter-spacing: 1px;
+  border-radius: 10px;
+  border: solid 3px #aaa;
+}
+
+#tickets-table {
+  width: 100%;
+  font-size: 1.2rem;
+
+  th {
+    font-style: italic;
+    letter-spacing: 1px;
+  }
+}
