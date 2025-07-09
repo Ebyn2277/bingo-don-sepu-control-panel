@@ -21,9 +21,12 @@
 .validating-modal-container,
 .sheets-section,
 .orders-section {
-  border: 2px solid #111;
+  border: 4px solid #161616;
+  border-radius: 10px;
   background-color: #222;
   opacity: 0.9;
+
+  box-shadow: 0 0 20px #0008;
 }
 
 .sheets-section {
@@ -53,8 +56,8 @@
   align-items: center;
   justify-content: space-between;
 
-  background-color: #111;
-  border-bottom: 2px solid #111;
+  background-color: #161616;
+  border-bottom: 2px solid #161616;
 
   button {
     height: 40px;
