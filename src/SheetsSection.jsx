@@ -29,7 +29,7 @@ function SheetsSection({ setIsSearchTicketModalOpen }) {
   );
 
   const { data: sheetsData, refetch: refetchSheetsData } = useFetch(
-    "http://192.168.20.27:8000/api/sheets/data",
+    "https://protestant-vinni-bingo-don-sepu-66e57ef7.koyeb.app/api/sheets/data",
     {
       method: "GET",
       headers,
@@ -67,7 +67,7 @@ function SheetsSection({ setIsSearchTicketModalOpen }) {
       formData.append("first_ticket_id", firstTicketId);
 
       const response = await fetch(
-        "http://192.168.20.27:8000/api/sheets/upload",
+        "https://protestant-vinni-bingo-don-sepu-66e57ef7.koyeb.app/api/sheets/upload",
         {
           method: "POST",
           headers: {
@@ -119,7 +119,7 @@ function SheetsSection({ setIsSearchTicketModalOpen }) {
   const fetchProcessingSheetsState = async () => {
     try {
       const response = await fetch(
-        "http://192.168.20.27:8000/api/sheets/uploading-status",
+        "https://protestant-vinni-bingo-don-sepu-66e57ef7.koyeb.app/api/sheets/uploading-status",
         {
           method: "GET",
           headers,

@@ -16,7 +16,7 @@ function Dashboard() {
     setData: setPaymentGatewayData,
     refetch: refetchPaymentGatewayData,
   } = useFetch(
-    "http://192.168.20.27:8000/api/payment-gateways/1",
+    "https://protestant-vinni-bingo-don-sepu-66e57ef7.koyeb.app/api/payment-gateways/1",
     {
       method: "GET",
       headers: {

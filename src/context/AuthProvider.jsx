@@ -9,13 +9,16 @@ function AuthProvider({ children }) {
 
   const login = useCallback(async (email, password) => {
     try {
-      const response = await fetch("http://192.168.20.27:8000/api/login", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ email, password }),
-      });
+      const response = await fetch(
+        "https://protestant-vinni-bingo-don-sepu-66e57ef7.koyeb.app/api/login",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ email, password }),
+        }
+      );
 
       if (!response.ok) {
         const errorData = await response.json();
@@ -37,13 +40,16 @@ function AuthProvider({ children }) {
   const logout = useCallback(async () => {
     try {
       if (accessToken) {
-        const response = await fetch("http://192.168.20.27:8000/api/logout", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${accessToken}`,
-          },
-        });
+        const response = await fetch(
+          "https://protestant-vinni-bingo-don-sepu-66e57ef7.koyeb.app/api/logout",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${accessToken}`,
+            },
+          }
+        );
         if (!response.ok) {
           const data = await response.json();
           if (data.message) {

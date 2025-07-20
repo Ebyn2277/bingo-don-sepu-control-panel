@@ -24,7 +24,7 @@ function OrdersSection({ pricePerSheet }) {
   );
 
   const { data: ordersData, refetch: refetchOrdersData } = useFetch(
-    "http://192.168.20.27:8000/api/orders",
+    "https://protestant-vinni-bingo-don-sepu-66e57ef7.koyeb.app/api/orders",
     {
       method: "GET",
       headers,
@@ -46,7 +46,7 @@ function OrdersSection({ pricePerSheet }) {
 
     try {
       const response = await fetch(
-        `http://192.168.20.27:8000/api/orders/${updatedOrder.id}`,
+        `https://protestant-vinni-bingo-don-sepu-66e57ef7.koyeb.app/api/orders/${updatedOrder.id}`,
         {
           method: "PUT",
           headers,
