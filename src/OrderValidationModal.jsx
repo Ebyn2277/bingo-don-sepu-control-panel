@@ -29,6 +29,8 @@ function OrderValidationModal({
 
   return (
     <div className="validating-modal-container">
+      <div className="event-overlay" onClick={handleOnClickCloseModal}></div>{" "}
+      {/** Overlay to close the modal on click */}
       <div className="validating-modal">
         <div className="section-header">
           <h2>Validación de Compra</h2>
