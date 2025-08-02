@@ -12,7 +12,7 @@ function OrdersSection({ pricePerSheet }) {
   const timeoutRef = useRef();
 
   const [isValidating, setIsValidating] = useState(false);
-  const [validatingOrder, setValidatingOrder] = useState(null);
+  const [validatingOrderIndex, setValidatingOrderIndex] = useState(null);
 
   const headers = useMemo(
     () => ({
@@ -37,10 +37,12 @@ function OrdersSection({ pricePerSheet }) {
   }, [ordersData]);
 
   const validateOrder = async (isValid) => {
-    if (!validatingOrder) return;
+    if (validatingOrderIndex === null) return;
+
+    console.log("Validating order:", isValid);
 
     const updatedOrder = {
-      ...validatingOrder,
+      ...tableOrders[validatingOrderIndex],
       payment_proof_validated: isValid,
     };
 
@@ -74,8 +76,6 @@ function OrdersSection({ pricePerSheet }) {
         throw new Error("Failed to fetch data:", errorData, response.status);
       }
 
-      const data = await response.json();
-      setValidatingOrder(data);
       refetchOrdersData(); // Refresh orders data after validation
     } catch (error) {
       console.error("Error validating order:", error);
@@ -84,7 +84,7 @@ function OrdersSection({ pricePerSheet }) {
 
   const handleClickShowValidatingModal = (order) => {
     if (!isValidating) setIsValidating(true);
-    setValidatingOrder(order);
+    setValidatingOrderIndex(tableOrders.findIndex((o) => o.id === order.id));
   };
 
   const handleOnChangeOrdersSearch = (e) => {
@@ -194,9 +194,11 @@ function OrdersSection({ pricePerSheet }) {
           </table>
         </div>
       </section>
-      {isValidating && validatingOrder && (
+      {isValidating && validatingOrderIndex !== null && (
         <OrderValidationModal
-          validatingOrder={validatingOrder}
+          validatingOrder={tableOrders[validatingOrderIndex]}
+          tableOrdersLength={tableOrders.length}
+          setValidatingOrderIndex={setValidatingOrderIndex}
           setIsValidating={setIsValidating}
           pricePerSheet={pricePerSheet}
           validateOrder={validateOrder}

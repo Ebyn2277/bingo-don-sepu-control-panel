@@ -1,14 +1,30 @@
 import "./Dashboard.css";
 import "./OrderValidationModal.css";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faAngleLeft, faAngleRight } from "@fortawesome/free-solid-svg-icons";
 
 function OrderValidationModal({
   validatingOrder,
+  tableOrdersLength,
+  setValidatingOrderIndex,
   setIsValidating,
   pricePerSheet,
   validateOrder,
 }) {
   const handleOnClickCloseModal = () => {
     setIsValidating(false);
+  };
+
+  const handleOnClickChangeOrder = (isNext) => {
+    if (isNext) {
+      setValidatingOrderIndex((prevIndex) =>
+        prevIndex < tableOrdersLength - 1 ? prevIndex + 1 : 0
+      );
+    } else {
+      setValidatingOrderIndex((prevIndex) =>
+        prevIndex > 0 ? prevIndex - 1 : tableOrdersLength - 1
+      );
+    }
   };
 
   return (
@@ -23,7 +39,14 @@ function OrderValidationModal({
             Cerrar
           </button>
         </div>
-
+        <button
+          className="switch-order-button"
+          onClick={() => {
+            handleOnClickChangeOrder(false);
+          }}
+        >
+          <FontAwesomeIcon icon={faAngleLeft} />
+        </button>
         <ul>
           <li>
             ID de compra: <span>{validatingOrder.id}</span>
@@ -38,9 +61,9 @@ function OrderValidationModal({
             Número de Cartones: <span>{validatingOrder.sheet_count}</span>
           </li>
           <li>
-            Total Pagado: $
+            Total Pagado:
             <span>
-              {(validatingOrder.sheet_count * pricePerSheet).toFixed(2)}
+              $ {(validatingOrder.sheet_count * pricePerSheet).toFixed(2)}
             </span>
           </li>
           <li>
@@ -56,7 +79,6 @@ function OrderValidationModal({
             </span>
           </li>
           <li id="payment-proof">
-            <p>Comprobante de Pago:</p>
             {validatingOrder.payment_proof_source_url ? (
               <img src={`${validatingOrder.payment_proof_source_url}`}></img>
             ) : (
@@ -81,25 +103,35 @@ function OrderValidationModal({
                 : "NO VALIDO"}
             </span>
           </li>
+          <li>
+            <div id="validation-buttons-container">
+              <button
+                className="validate-confirm-button"
+                onClick={() => {
+                  validateOrder(true);
+                }}
+              >
+                ES VALIDO
+              </button>
+              <button
+                className="validate-cancel-button"
+                onClick={() => {
+                  validateOrder(false);
+                }}
+              >
+                NO ES VALIDO
+              </button>
+            </div>
+          </li>
         </ul>
-        <div id="validation-buttons-container">
-          <button
-            className="validate-confirm-button"
-            onClick={() => {
-              validateOrder(true);
-            }}
-          >
-            ES VALIDO
-          </button>
-          <button
-            className="validate-cancel-button"
-            onClick={() => {
-              validateOrder(false);
-            }}
-          >
-            NO ES VALIDO
-          </button>
-        </div>
+        <button
+          className="switch-order-button"
+          onClick={() => {
+            handleOnClickChangeOrder(true);
+          }}
+        >
+          <FontAwesomeIcon icon={faAngleRight} />
+        </button>
       </div>
     </div>
   );
