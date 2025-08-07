@@ -135,7 +135,7 @@ function OrdersSection({ pricePerSheet }) {
                 <th>Nombre</th>
                 <th>Número de Whatsapp</th>
                 <th>Número de Combos</th>
-                <th>Combos</th>
+                <th>Tableros</th>
                 <th>Total Pagado</th>
                 <th>Fecha de Compra</th>
                 <th>Hora de Compra</th>
@@ -150,17 +150,23 @@ function OrdersSection({ pricePerSheet }) {
                     <td>{order.user_name}</td>
                     <td>{order.user_whatsapp}</td>
                     <td>{order.sheet_count}</td>
-                    <td className="sheets-container">
-                      {order.sheets.map((value, index) => (
-                        <a
-                          key={`ticket-url-${value.id}`}
-                          href={value.source_url}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                        >
-                          Sheet {index + 1}
-                        </a>
-                      ))}
+                    <td className="tickets-container">
+                      <ul>
+                        {order.sheets.map((sheet) => (
+                          <li>
+                            <a
+                              key={`ticket-url-${sheet.id}`}
+                              href={sheet.source_url}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                            >
+                              {sheet.tickets
+                                .map((ticket) => ticket.id)
+                                .join(", ")}
+                            </a>
+                          </li>
+                        ))}
+                      </ul>
                     </td>
                     <td>${(order.sheet_count * pricePerSheet).toFixed(2)}</td>
                     <td>{new Date(order.created_at).toLocaleDateString()}</td>
