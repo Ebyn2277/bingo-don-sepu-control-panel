@@ -1,7 +1,13 @@
 import "./Dashboard.css";
 import "./OrderValidationModal.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faAngleLeft, faAngleRight } from "@fortawesome/free-solid-svg-icons";
+import {
+  faAngleLeft,
+  faAngleRight,
+  faPlus,
+  faMinus,
+} from "@fortawesome/free-solid-svg-icons";
+import { useState } from "react";
 
 function OrderValidationModal({
   validatingOrder,
@@ -11,6 +17,16 @@ function OrderValidationModal({
   pricePerSheet,
   validateOrder,
 }) {
+  const [imageSize, setImageSize] = useState(100);
+
+  const handleOnClickIncreaseImageSize = () => {
+    setImageSize((prevSize) => prevSize + 25);
+  };
+
+  const handleOnClickDecreaseImageSize = () => {
+    if (imageSize > 50) setImageSize((prevSize) => prevSize - 25);
+  };
+
   const handleOnClickCloseModal = () => {
     setIsValidating(false);
   };
@@ -82,7 +98,29 @@ function OrderValidationModal({
           </li>
           <li id="payment-proof">
             {validatingOrder.payment_proof_source_url ? (
-              <img src={`${validatingOrder.payment_proof_source_url}`}></img>
+              <>
+                <div id="payment-proof-image-container">
+                  <img
+                    src={`${validatingOrder.payment_proof_source_url}`}
+                    style={{ height: imageSize + "%" }}
+                  ></img>
+                </div>
+
+                <div id="change-image-size-buttons">
+                  <button
+                    id="increase-image-size-button"
+                    onClick={handleOnClickIncreaseImageSize}
+                  >
+                    <FontAwesomeIcon icon={faPlus} />
+                  </button>
+                  <button
+                    id="decrease-image-size-button"
+                    onClick={handleOnClickDecreaseImageSize}
+                  >
+                    <FontAwesomeIcon icon={faMinus} />
+                  </button>
+                </div>
+              </>
             ) : (
               "No disponible"
             )}
