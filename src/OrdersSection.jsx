@@ -168,7 +168,7 @@ function OrdersSection({ pricePerSheet }) {
                         ))}
                       </ul>
                     </td>
-                    <td>${(order.sheet_count * pricePerSheet).toFixed(2)}</td>
+                    <td>${order.total_amount.toFixed(2)}</td>
                     <td>{new Date(order.created_at).toLocaleDateString()}</td>
                     <td>{new Date(order.created_at).toLocaleTimeString()}</td>
                     <td>

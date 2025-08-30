@@ -80,9 +80,7 @@ function OrderValidationModal({
           </li>
           <li>
             Total Pagado:
-            <span>
-              $ {(validatingOrder.sheet_count * pricePerSheet).toFixed(2)}
-            </span>
+            <span>$ {validatingOrder.total_amount.toFixed(2)}</span>
           </li>
           <li>
             Fecha de Compra:{" "}
