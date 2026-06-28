@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback, useMemo } from "react";
 import { AuthContext } from "./AuthContext";
 
 function AuthProvider({ children }) {
+  const apiUrl = import.meta.env.VITE_API_URL
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [accessToken, setAccessToken] = useState(
     localStorage.getItem("access_token")
@@ -10,7 +11,7 @@ function AuthProvider({ children }) {
   const login = useCallback(async (email, password) => {
     try {
       const response = await fetch(
-        "https://protestant-vinni-bingo-don-sepu-66e57ef7.koyeb.app/api/login",
+        apiUrl + "api/login",
         {
           method: "POST",
           headers: {
@@ -41,7 +42,7 @@ function AuthProvider({ children }) {
     try {
       if (accessToken) {
         const response = await fetch(
-          "https://protestant-vinni-bingo-don-sepu-66e57ef7.koyeb.app/api/logout",
+          apiUrl + "api/logout",
           {
             method: "POST",
             headers: {

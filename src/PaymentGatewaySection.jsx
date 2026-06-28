@@ -8,6 +8,7 @@ function PaymentGatewaySection({
   setPaymentGatewayData,
   refetchPaymentGatewayData,
 }) {
+  const apiUrl = import.meta.env.VITE_API_URL
   const { accessToken, logout } = useContext(AuthContext);
 
   const [enabledFrom, setEnabledFrom] = useState("");
@@ -61,7 +62,7 @@ function PaymentGatewaySection({
   async function updatePaymentGatewayData(updatedPaymentGatewayData) {
     try {
       const response = await fetch(
-        "https://protestant-vinni-bingo-don-sepu-66e57ef7.koyeb.app/api/payment-gateways/1",
+        apiUrl + "api/payment-gateways/1",
         {
           method: "PUT",
           headers: {

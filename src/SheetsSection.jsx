@@ -5,6 +5,7 @@ import { useContext, useState, useRef, useEffect, useMemo } from "react";
 import useFetch from "./hooks/useFetch";
 
 function SheetsSection({ setIsSearchTicketModalOpen }) {
+  const apiUrl = import.meta.env.VITE_API_URL
   const { accessToken, logout } = useContext(AuthContext);
   const [isUploadingSheets, setIsUploadingSheets] = useState(false);
   const [file, setFile] = useState(null);
@@ -29,7 +30,7 @@ function SheetsSection({ setIsSearchTicketModalOpen }) {
   );
 
   const { data: sheetsData, refetch: refetchSheetsData } = useFetch(
-    "https://protestant-vinni-bingo-don-sepu-66e57ef7.koyeb.app/api/sheets/data",
+    apiUrl + "api/sheets/data",
     {
       method: "GET",
       headers,
@@ -67,7 +68,7 @@ function SheetsSection({ setIsSearchTicketModalOpen }) {
       formData.append("first_ticket_id", firstTicketId);
 
       const response = await fetch(
-        "https://protestant-vinni-bingo-don-sepu-66e57ef7.koyeb.app/api/sheets/upload",
+        apiUrl + "api/sheets/upload",
         {
           method: "POST",
           headers: {
@@ -119,7 +120,7 @@ function SheetsSection({ setIsSearchTicketModalOpen }) {
   const fetchProcessingSheetsState = async () => {
     try {
       const response = await fetch(
-        "https://protestant-vinni-bingo-don-sepu-66e57ef7.koyeb.app/api/sheets/uploading-status",
+        apiUrl + "api/sheets/uploading-status",
         {
           method: "GET",
           headers,

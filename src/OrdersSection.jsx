@@ -6,6 +6,7 @@ import useFetch from "./hooks/useFetch";
 import OrderValidationModal from "./OrderValidationModal";
 
 function OrdersSection({ pricePerSheet }) {
+  const apiUrl = import.meta.env.VITE_API_URL
   const { accessToken, logout } = useContext(AuthContext);
   const [tableOrders, setTableOrders] = useState();
   const [searchParam, setSearchParam] = useState("");
@@ -24,7 +25,7 @@ function OrdersSection({ pricePerSheet }) {
   );
 
   const { data: ordersData, refetch: refetchOrdersData } = useFetch(
-    "https://protestant-vinni-bingo-don-sepu-66e57ef7.koyeb.app/api/orders",
+    apiUrl + "api/orders",
     {
       method: "GET",
       headers,

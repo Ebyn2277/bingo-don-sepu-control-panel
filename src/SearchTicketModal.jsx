@@ -4,6 +4,7 @@ import { AuthContext } from "./context/AuthContext";
 import useFetch from "./hooks/useFetch";
 
 function SearchTicketModal({ setIsSearchTicketModalOpen }) {
+  const apiUrl = import.meta.env.VITE_API_URL
   const { accessToken } = useContext(AuthContext);
   // const [tableTickets, setTableTickets] = useState([]);
   const [searchParam, setSearchParam] = useState(null);
@@ -19,7 +20,7 @@ function SearchTicketModal({ setIsSearchTicketModalOpen }) {
   );
 
   const { data: ticketsData } = useFetch(
-    "https://protestant-vinni-bingo-don-sepu-66e57ef7.koyeb.app/api/tickets",
+    apiUrl + "api/tickets",
     {
       method: "GET",
       headers,

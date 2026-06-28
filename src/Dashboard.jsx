@@ -8,6 +8,7 @@ import SearchTicketModal from "./SearchTicketModal";
 import "./Dashboard.css";
 
 function Dashboard() {
+  const apiUrl = import.meta.env.VITE_API_URL
   const { accessToken, logout } = useContext(AuthContext);
   const [isSearchTicketModalOpen, setIsSearchTicketModalOpen] = useState(false);
 
@@ -16,7 +17,7 @@ function Dashboard() {
     setData: setPaymentGatewayData,
     refetch: refetchPaymentGatewayData,
   } = useFetch(
-    "https://protestant-vinni-bingo-don-sepu-66e57ef7.koyeb.app/api/payment-gateways/1",
+    apiUrl + "api/payment-gateways/1",
     {
       method: "GET",
       headers: {
