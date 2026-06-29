@@ -1,190 +1,194 @@
 .validating-modal-container {
-  width: 100%;
-  height: 100vh;
+  position: fixed;
+  inset: 0;
   display: flex;
   justify-content: center;
-
-  position: fixed;
-  top: 0;
-  left: 0;
-
-  background-color: rgba(0, 0, 0, 0.6);
-  border: none;
+  align-items: flex-end;
+  background-color: transparent;
   z-index: 1500;
 }
 
-.event-overlay {
+.validating-modal {
+  position: relative;
+  width: min(100%, 520px);
+  max-height: 100vh;
+  overflow-y: auto;
+  padding: 1.5rem 1.25rem 1.5rem;
+  background-color: #121212;
+  border-radius: 1rem 1rem 0 0;
+  border: 1px solid #333;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.35);
+  transform: translateY(12px);
+  opacity: 0;
+  transition: transform 180ms ease, opacity 180ms ease;
+  z-index: 1501;
+}
+
+.validating-modal.open {
+  transform: translateY(0);
+  opacity: 1;
+}
+
+.validating-modal h2 {
+  margin: 0 0 1rem;
+  font-size: 1.4rem;
+  letter-spacing: 0.02em;
+  color: #f2b138;
+}
+
+.close-modal-button {
   position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  z-index: 999;
+  top: 1rem;
+  right: 1rem;
+  appearance: none;
+  border: none;
+  background: transparent;
+  color: #ccc;
+  font-weight: 700;
   cursor: pointer;
 }
 
-/* ── MODAL CONTENEDOR ───────────────────────────────────────────────────────── */
-.validating-modal {
-  height: 90vh;
-  width: 90vw;
-  max-width: 700px;
-  margin-top: 5vh;
-  z-index: 1000;
-  padding-bottom: 0.5rem;
-
-  display: grid;
-  grid-template-columns: min-content 1fr min-content;
-  grid-template-rows: min-content 1fr;
-  column-gap: 0.5rem;
-  row-gap: 0.5rem;
-  overflow-y: auto;
-
-  background-color: #222;
-  border: 4px solid #161616;
-  border-radius: 10px;
+.close-modal-button:hover {
+  color: #fff;
 }
 
-.section-header {
-  grid-column: 1 / -1;
-  grid-row: 1;
-}
-
-/* ── LISTA DE DATOS ─────────────────────────────────────────────────────────── */
-.validating-modal ul {
-  grid-column: 2;
-  grid-row: 2;
-
-  width: 100%;
-  height: 100%;
-  padding: 0.5rem;
-  overflow-y: auto;
-
-  display: flex;
-  flex-direction: column;
-  gap: 0.3rem;
-
-  background-color: #0003;
-  list-style: none;
-}
-
-.validating-modal li {
-  width: 100%;
-  padding: 0.6rem 0.8rem;
-
+.modal-summary {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  flex-wrap: wrap;
-  gap: 0.4rem;
+  gap: 0.5rem;
+  padding: 0.75rem 1rem;
+  margin-bottom: 1rem;
 
-  font-size: 1.1rem;
+  background-color: #1f1f1f;
+  border: 1px solid #2d2d2d;
+  border-radius: 0.75rem;
 }
 
-.validating-modal li:nth-child(odd) {
-  background-color: #333;
-  border-radius: 0.3rem;
+.summary-name {
+  color: #fff;
+  font-weight: 700;
 }
 
-.validating-modal span {
-  font-weight: bold;
-  text-align: right;
-}
-
-/* ── BOTONES DE NAVEGACIÓN ──────────────────────────────────────────────────── */
-.switch-order-button {
-  grid-column: span 1;
-  grid-row: 2;
-
-  padding: 1rem;
-
-  font-size: 2rem;
-  border-radius: 0;
-  border: none;
-
-  transition: background-color 0.2s ease-out, color 0.2s ease-out;
-}
-
-.switch-order-button:hover {
-  background-color: #0006;
-  color: #bbb;
-}
-
-.switch-order-button:first-of-type { margin-left: 0.5rem; }
-.switch-order-button:last-of-type  { margin-right: 0.5rem; }
-
-.close-modal-button {
-  width: fit-content;
-  padding: 0.5rem 1rem;
-}
-
-/* ── CARTONES ASIGNADOS ─────────────────────────────────────────────────────── */
-.validating-modal li span a {
-  display: inline-block;
-  padding: 0.2rem 0.5rem;
-  margin: 0.1rem;
-  font-size: 0.95rem;
+.summary-combos {
+  color: #ccc;
   font-weight: 600;
-  color: #b3bf5a;
-  text-decoration: underline;
-  word-break: break-all;
 }
 
-.validating-modal li span a:hover { opacity: 0.8; }
+.confirmation-details {
+  list-style: none;
+  margin: 0 0 1.5rem;
+  padding: 0;
+  display: grid;
+  gap: 0.9rem;
+}
 
-/* ── ESTADOS DE VALIDACIÓN ──────────────────────────────────────────────────── */
-.pendiente { color: orange;  font-weight: bold; }
-.valido    { color: #4caf50; font-weight: bold; }
-.no-valido { color: #f44336; font-weight: bold; }
-
-/* ── BOTONES DE ACCIÓN DE VALIDACIÓN ───────────────────────────────────────── */
-#validation-buttons-container {
-  width: 100%;
-  display: flex;
-  justify-content: stretch;
+.confirmation-details li {
+  display: grid;
   gap: 0.3rem;
+  padding: 0.85rem 1rem;
+  background: #1f1f1f;
+  border: 1px solid #2d2d2d;
+  border-radius: 0.75rem;
+}
+
+.confirmation-details p {
+  margin: 0;
+  color: #ddd;
+}
+
+.confirmation-details li p:first-child {
+  color: #999;
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.confirmation-details li p:last-child {
+  color: #fff;
+  font-size: 1rem;
+  font-weight: 700;
+}
+
+.sheet-link {
+  display: inline-block;
+  margin: 0.15rem 0;
+}
+
+.sheet-link a {
+  color: #f2b138;
+  text-decoration: none;
+}
+
+.sheet-link a:hover {
+  text-decoration: underline;
+}
+
+#validation-buttons-container {
+  display: grid;
+  gap: 0.8rem;
 }
 
 #validation-buttons-container button {
-  flex: 1;
-  padding: 0.8rem 0;
-  font-weight: bold;
-  font-size: 0.95rem;
-  letter-spacing: 0.5px;
+  width: 100%;
+  min-height: 3rem;
   border: none;
+  border-radius: 0.65rem;
   color: #fff;
-  text-shadow: 0 1px 3px #0005;
+  font-weight: 700;
+  font-size: 0.98rem;
+  cursor: pointer;
+  transition: transform 0.2s ease, opacity 0.2s ease;
 }
 
 #validation-buttons-container button:hover {
-  opacity: 0.85;
-  text-decoration: underline;
+  transform: translateY(-1px);
+  opacity: 0.95;
 }
 
-#validation-buttons-container button:first-child { border-radius: 0.4rem 0 0 0.4rem; }
-#validation-buttons-container button:last-child   { border-radius: 0 0.4rem 0.4rem 0; }
+.validate-confirm-button {
+  background-color: #388e3c;
+}
 
-.validate-confirm-button { background-color: #388e3c; }
-.validate-pending-button { background-color: #f57c00; border-radius: 0 !important; }
-.validate-cancel-button  { background-color: #c62828; }
+.validate-pending-button {
+  background-color: #f57c00;
+}
 
-/* ── BOTÓN ELIMINAR RESERVA ─────────────────────────────────────────────────── */
-.delete-order-button {
-  width: 100%;
-  height: auto;
-  padding: 0.7rem 1rem;
+.validate-cancel-button {
+  background-color: #c62828;
+}
 
-  font-size: 1rem;
-  font-weight: 600;
-  letter-spacing: 0.5px;
+.status-pending {
+  color: #f2b138;
+  font-weight: 700;
+}
 
-  background-color: transparent;
-  border: 2px solid #c62828;
-  border-radius: 0.4rem;
+.status-valid {
+  color: #4caf50;
+  font-weight: 700;
+}
+
+.status-invalid {
   color: #f44336;
-
-  transition: background-color 0.2s, color 0.2s;
+  font-weight: 700;
 }
 
-.delete-order-button:hover {
-  background-color: #c6282822;
+@media (max-width: 640px) {
+  .validating-modal {
+    width: 100vw;
+    max-width: 100vw;
+    border-radius: 0;
+    padding: 1rem;
+    left: 0;
+    right: 0;
+    box-shadow: none;
+  }
+
+  .close-modal-button {
+    top: 0.6rem;
+    right: 0.6rem;
+  }
+
+  #validation-buttons-container {
+    gap: 0.5rem;
+  }
 }

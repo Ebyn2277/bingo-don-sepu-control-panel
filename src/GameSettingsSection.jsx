@@ -6,38 +6,29 @@ function GameSettingsSection({ paymentGatewayData, setPaymentGatewayData }) {
   const apiUrl = import.meta.env.VITE_API_URL;
   const { accessToken, logout } = useContext(AuthContext);
 
-  const [sellLimit, setSellLimit]   = useState("");
-  const [sheetPrice, setSheetPrice] = useState("");
-  const [isSaving, setIsSaving]     = useState(false);
-  const [feedback, setFeedback]     = useState(null);
+  const [sellLimit, setSellLimit] = useState("");
+  const [isSaving, setIsSaving]   = useState(false);
+  const [feedback, setFeedback]   = useState(null);
 
   useEffect(() => {
     if (!paymentGatewayData) return;
     setSellLimit(paymentGatewayData.sell_limit ?? "");
-    setSheetPrice(paymentGatewayData.sheet_price ?? "");
   }, [paymentGatewayData]);
 
   const hasChanges =
     paymentGatewayData &&
-    (parseInt(sellLimit)  !== paymentGatewayData.sell_limit ||
-     parseInt(sheetPrice) !== paymentGatewayData.sheet_price);
+    parseInt(sellLimit) !== paymentGatewayData.sell_limit;
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setFeedback(null);
 
     const parsedLimit = parseInt(sellLimit);
-    const parsedPrice = parseInt(sheetPrice);
 
     if (!parsedLimit || parsedLimit < 1) {
       setFeedback({ type: "error", message: "El límite debe ser un número entero mayor a 0." });
       return;
     }
-    if (isNaN(parsedPrice) || parsedPrice < 0) {
-      setFeedback({ type: "error", message: "El precio no puede ser negativo." });
-      return;
-    }
-
     setIsSaving(true);
     try {
       const response = await fetch(`${apiUrl}api/payment-gateways/1`, {
@@ -48,9 +39,8 @@ function GameSettingsSection({ paymentGatewayData, setPaymentGatewayData }) {
           Authorization: `Bearer ${accessToken}`,
         },
         body: JSON.stringify({
-          name:        paymentGatewayData.name,
-          sell_limit:  parsedLimit,
-          sheet_price: parsedPrice,
+          name:       paymentGatewayData.name,
+          sell_limit: parsedLimit,
         }),
       });
 
@@ -96,31 +86,6 @@ function GameSettingsSection({ paymentGatewayData, setPaymentGatewayData }) {
               min="1"
               value={sellLimit}
               onChange={(e) => setSellLimit(e.target.value)}
-              disabled={isSaving}
-            />
-          </div>
-
-          <div className="setting-row">
-            <label htmlFor="sheet-price">
-              Precio por combo (en centavos COP)
-              <span className="setting-hint">
-                Actual: <strong>{paymentGatewayData.sheet_price}</strong>
-                {" — equivale a "}
-                <strong>
-                  {new Intl.NumberFormat("es-CO", {
-                    style: "currency",
-                    currency: "COP",
-                    maximumFractionDigits: 0,
-                  }).format(paymentGatewayData.sheet_price)}
-                </strong>
-              </span>
-            </label>
-            <input
-              id="sheet-price"
-              type="number"
-              min="0"
-              value={sheetPrice}
-              onChange={(e) => setSheetPrice(e.target.value)}
               disabled={isSaving}
             />
           </div>

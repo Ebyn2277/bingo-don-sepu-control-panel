@@ -51,7 +51,7 @@ function Dashboard() {
           setPaymentGatewayData={setPaymentGatewayData ?? null}
         />
 
-        <OrdersSection pricePerSheet={paymentGatewayData?.sheet_price || 0} />
+        <OrdersSection />
       </div>
     </div>
   );

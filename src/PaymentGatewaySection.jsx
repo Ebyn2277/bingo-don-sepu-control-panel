@@ -11,28 +11,12 @@ function PaymentGatewaySection({
   const apiUrl = import.meta.env.VITE_API_URL;
   const { accessToken, logout } = useContext(AuthContext);
 
-  const [enabledFrom, setEnabledFrom] = useState("");
-  const [enabledUntil, setEnabledUntil] = useState("");
   const [isPaymentGatewayEnabled, setIsPaymentGatewayEnabled] = useState(false);
-  const [isEnablingPaymentGateway, setIsEnablingPaymentGateway] = useState(false);
   const [isResetting, setIsResetting] = useState(false);
-
-  const formatToLocalTime = (utcTime) =>
-    new Date(utcTime).toLocaleString("es-CO");
 
   useEffect(() => {
     if (!paymentGatewayData) return;
-
-    if (!paymentGatewayData.enabled) {
-      setIsPaymentGatewayEnabled(false);
-      return;
-    }
-
-    const from = new Date(paymentGatewayData.enabled_from);
-    const until = new Date(paymentGatewayData.enabled_until);
-    const now = new Date();
-
-    setIsPaymentGatewayEnabled(now >= from && now <= until);
+    setIsPaymentGatewayEnabled(Boolean(paymentGatewayData.enabled));
   }, [paymentGatewayData]);
 
   async function updatePaymentGatewayData(updatedData) {
@@ -65,50 +49,11 @@ function PaymentGatewaySection({
     }
   }
 
-  const handleClickDisable = async () => {
+  const handleTogglePaymentGateway = async () => {
     await updatePaymentGatewayData({
       name: paymentGatewayData.name,
-      enabled: false,
-      enabled_from: null,
-      enabled_until: null,
+      enabled: !paymentGatewayData.enabled,
     });
-  };
-
-  function hasAtLeastOneDayBetween(date1, date2) {
-    const d1 = Date.UTC(date1.getUTCFullYear(), date1.getUTCMonth(), date1.getUTCDate());
-    const d2 = Date.UTC(date2.getUTCFullYear(), date2.getUTCMonth(), date2.getUTCDate());
-    return Math.abs(d1 - d2) >= 24 * 60 * 60 * 1000;
-  }
-
-  const handleClickOnSubmit = async (e) => {
-    e.preventDefault();
-
-    if (!enabledFrom || !enabledUntil) {
-      alert("Se deben establecer las fechas en que estará habilitada la pasarela de pago.");
-      return;
-    }
-
-    const from = new Date(enabledFrom + "T00:00:00");
-    const until = new Date(enabledUntil + "T00:00:00");
-
-    if (from > until) {
-      alert("La fecha de inicio no puede ser mayor que la fecha final.");
-      return;
-    }
-
-    if (!hasAtLeastOneDayBetween(from, until)) {
-      alert("Debe haber al menos un día entre la fecha de inicio y la fecha final.");
-      return;
-    }
-
-    const success = await updatePaymentGatewayData({
-      name: paymentGatewayData.name,
-      enabled: true,
-      enabled_from: from,
-      enabled_until: until,
-    });
-
-    if (success) setIsEnablingPaymentGateway(false);
   };
 
   // Resets the game: frees all sheets, clears gateway dates, records reset timestamp.
@@ -170,55 +115,10 @@ function PaymentGatewaySection({
             </span>
           </li>
 
-          {paymentGatewayData.enabled_from && paymentGatewayData.enabled_until && (
-            <li id="enabled-dates">
-              <p>
-                {isPaymentGatewayEnabled
-                  ? "Pasarela abierta..."
-                  : new Date() > new Date(paymentGatewayData.enabled_until)
-                  ? "La pasarela se abrió..."
-                  : "La pasarela se abrirá..."}
-              </p>
-              <p>
-                ...desde el{" "}
-                <span>{formatToLocalTime(paymentGatewayData.enabled_from)}</span>
-              </p>
-              <p>
-                ...hasta el{" "}
-                <span>{formatToLocalTime(paymentGatewayData.enabled_until)}</span>
-              </p>
-            </li>
-          )}
-
           <li id="enabled-functions">
-            {isPaymentGatewayEnabled ? (
-              <button onClick={handleClickDisable}>Deshabilitar</button>
-            ) : !isEnablingPaymentGateway ? (
-              <button onClick={() => setIsEnablingPaymentGateway(true)}>
-                {paymentGatewayData.enabled_from && paymentGatewayData.enabled_until
-                  ? "Cambiar fechas hábiles"
-                  : "Habilitar"}
-              </button>
-            ) : (
-              <form onSubmit={handleClickOnSubmit}>
-                <label>Desde el:</label>
-                <input
-                  type="date"
-                  value={enabledFrom}
-                  onChange={(e) => setEnabledFrom(e.target.value)}
-                />
-                <label>Hasta el:</label>
-                <input
-                  type="date"
-                  value={enabledUntil}
-                  onChange={(e) => setEnabledUntil(e.target.value)}
-                />
-                <button type="submit">Habilitar</button>
-                <button type="button" onClick={() => setIsEnablingPaymentGateway(false)}>
-                  Cancelar
-                </button>
-              </form>
-            )}
+            <button onClick={handleTogglePaymentGateway}>
+              {isPaymentGatewayEnabled ? "Deshabilitar pasarela" : "Habilitar pasarela"}
+            </button>
           </li>
 
           {/* Game reset — destructive action, requires explicit confirmation */}

@@ -30,9 +30,63 @@ function OrdersSection({ pricePerSheet }) {
     [accessToken]
   );
 
+  const { data: sheetsData } = useFetch(
+    apiUrl + "api/sheets",
+    { method: "GET", headers },
+    [accessToken]
+  );
+  const [currentSheets, setCurrentSheets] = useState([]);
+
   useEffect(() => {
     setTableOrders(ordersData);
   }, [ordersData]);
+
+  useEffect(() => {
+    setCurrentSheets(sheetsData || []);
+  }, [sheetsData]);
+
+  const sheetIdToComboNumber = useMemo(() => {
+    if (!currentSheets?.length) return new Map();
+
+    const sortedSheets = [...currentSheets].sort((a, b) => {
+      const dateA = new Date(a.created_at).getTime();
+      const dateB = new Date(b.created_at).getTime();
+      return dateA - dateB || a.id - b.id;
+    });
+
+    return new Map(sortedSheets.map((sheet, index) => [sheet.id, index + 1]));
+  }, [currentSheets]);
+
+  const getOrderComboNumbers = (order) => {
+    if (!order?.sheets?.length) return [];
+
+    return order.sheets
+      .map((sheet) => sheetIdToComboNumber.get(sheet.id))
+      .filter((comboNumber) => Number.isInteger(comboNumber))
+      .sort((a, b) => a - b);
+  };
+
+  const formatComboNumbers = (numbers) => {
+    if (!numbers?.length) return "";
+
+    const ranges = [];
+    let start = numbers[0];
+    let end = numbers[0];
+
+    for (let i = 1; i < numbers.length; i++) {
+      const current = numbers[i];
+      if (current === end + 1) {
+        end = current;
+      } else {
+        ranges.push(start === end ? `${start}` : `${start}-${end}`);
+        start = current;
+        end = current;
+      }
+    }
+
+    ranges.push(start === end ? `${start}` : `${start}-${end}`);
+    return ranges.join(", ");
+  };
 
   // Sends PUT /orders/{id} with the full order + updated validation field.
   // Accepts true (valid), false (invalid), or null (reset to pending).
@@ -97,8 +151,21 @@ function OrdersSection({ pricePerSheet }) {
   };
 
   const handleClickShowValidatingModal = (order) => {
-    setIsValidating(true);
-    setValidatingOrderIndex(tableOrders.findIndex((o) => o.id === order.id));
+    const idx = tableOrders.findIndex((o) => o.id === order.id);
+
+    if (isValidating) {
+      if (validatingOrderIndex === idx) return; // already validating this row
+
+      // close current modal then open the new one to create a clear transition
+      setIsValidating(false);
+      setTimeout(() => {
+        setValidatingOrderIndex(idx);
+        setIsValidating(true);
+      }, 160);
+    } else {
+      setValidatingOrderIndex(idx);
+      setIsValidating(true);
+    }
   };
 
   const handleOnChangeOrdersSearch = (e) => {
@@ -144,66 +211,66 @@ function OrdersSection({ pricePerSheet }) {
           <table id="orders-table">
             <thead>
               <tr>
-                <th>ID</th>
                 <th>Nombre</th>
                 <th>WhatsApp</th>
                 <th>Combos</th>
-                <th>Cartones (tickets)</th>
-                <th>Total</th>
-                <th>Fecha</th>
-                <th>Hora</th>
-                <th>Validación</th>
+                <th>Cartones</th>
+                <th>Estado</th>
               </tr>
             </thead>
             <tbody>
               {tableOrders && tableOrders.length > 0 ? (
-                tableOrders.map((order) => (
-                  <tr key={order.id}>
-                    <td>{order.id}</td>
-                    <td>{order.user_name}</td>
-                    <td>{order.user_whatsapp}</td>
-                    <td>{order.sheet_count}</td>
-                    <td className="tickets-container">
-                      <ul>
-                        {order.sheets?.map((sheet) => (
-                          <li key={sheet.id}>
-                            <a
-                              href={sheet.source_url}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                            >
-                              {sheet.tickets?.map((t) => t.id).join(", ")}
-                            </a>
-                          </li>
-                        ))}
-                      </ul>
-                    </td>
-                    <td>${order.total_amount.toFixed(2)}</td>
-                    <td>{new Date(order.created_at).toLocaleDateString()}</td>
-                    <td>{new Date(order.created_at).toLocaleTimeString()}</td>
-                    <td>
-                      <button
-                        className={`validate-button ${
-                          order.payment_proof_validated === null
-                            ? "pendiente"
-                            : order.payment_proof_validated
-                            ? "valido"
-                            : "no-valido"
-                        }`}
-                        onClick={() => handleClickShowValidatingModal(order)}
-                      >
-                        {order.payment_proof_validated === null
-                          ? "Pendiente"
-                          : order.payment_proof_validated
-                          ? "Válido"
-                          : "No válido"}
-                      </button>
-                    </td>
-                  </tr>
-                ))
+                tableOrders.map((order, index) => {
+                  const statusLabel =
+                    order.payment_proof_validated === null
+                      ? "Pendiente"
+                      : order.payment_proof_validated
+                      ? "Validado"
+                      : "No válido";
+                  const statusClass =
+                    order.payment_proof_validated === null
+                      ? "status-pending"
+                      : order.payment_proof_validated
+                      ? "status-valid"
+                      : "status-invalid";
+
+                  return (
+                    <tr
+                      key={order.id}
+                      className={validatingOrderIndex === index ? "selected-row" : ""}
+                      onClick={() => handleClickShowValidatingModal(order)}
+                    >
+                      <td>{order.user_name}</td>
+                      <td>{order.user_whatsapp}</td>
+                      <td>
+                        {formatComboNumbers(getOrderComboNumbers(order)) || order.sheet_count}
+                      </td>
+                      <td className="tickets-container">
+                        <ul>
+                          {order.sheets?.map((sheet) => (
+                            <li key={sheet.id}>
+                              <a
+                                href={sheet.source_url}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                              >
+                                {sheet.tickets?.map((t) => t.id).join(", ")}
+                              </a>
+                            </li>
+                          ))}
+                        </ul>
+                      </td>
+                      <td>
+                        <span className={`order-status ${statusClass}`}>
+                          {statusLabel}
+                        </span>
+                      </td>
+                    </tr>
+                  );
+                })
               ) : (
                 <tr>
-                  <td colSpan="9">No hay órdenes para el juego actual.</td>
+                  <td colSpan="5">No hay órdenes para el juego actual.</td>
                 </tr>
               )}
             </tbody>
@@ -214,10 +281,8 @@ function OrdersSection({ pricePerSheet }) {
       {isValidating && validatingOrderIndex !== null && (
         <OrderValidationModal
           validatingOrder={tableOrders[validatingOrderIndex]}
-          tableOrdersLength={tableOrders.length}
-          setValidatingOrderIndex={setValidatingOrderIndex}
+          comboLabel={formatComboNumbers(getOrderComboNumbers(tableOrders[validatingOrderIndex]))}
           setIsValidating={setIsValidating}
-          pricePerSheet={pricePerSheet}
           validateOrder={validateOrder}
           deleteOrder={deleteOrder}
         />

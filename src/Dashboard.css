@@ -6,8 +6,9 @@
 
 .dashboard {
   display: grid;
-  grid-template-columns: repeat(2, minmax(auto, 1fr)) auto;
-  row-gap: 1rem;
+  grid-template-columns: repeat(2, minmax(300px, 1fr));
+  grid-template-rows: auto auto;
+  gap: 1rem;
 }
 
 #logoutButton {
@@ -15,6 +16,12 @@
   align-self: flex-end;
   font-weight: bold;
   letter-spacing: 2px;
+}
+
+@media (max-width: 900px) {
+  .dashboard {
+    grid-template-columns: 1fr;
+  }
 }
 
 .payment-gateway-section,
