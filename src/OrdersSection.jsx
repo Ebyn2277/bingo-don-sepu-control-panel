@@ -14,6 +14,7 @@ function OrdersSection({ pricePerSheet }) {
 
   const [isValidating, setIsValidating] = useState(false);
   const [validatingOrderIndex, setValidatingOrderIndex] = useState(null);
+  const [isCompactView, setIsCompactView] = useState(false);
 
   const headers = useMemo(
     () => ({
@@ -86,6 +87,45 @@ function OrdersSection({ pricePerSheet }) {
 
     ranges.push(start === end ? `${start}` : `${start}-${end}`);
     return ranges.join(", ");
+  };
+
+  const renderCompactOrders = () => {
+    if (!tableOrders || tableOrders.length === 0) {
+      return <div className="compact-empty">No hay órdenes para el juego actual.</div>;
+    }
+
+    const compactRows = tableOrders.flatMap((order) => {
+      const comboNumbers = getOrderComboNumbers(order);
+      if (!comboNumbers.length) {
+        return [
+          {
+            id: `order-${order.id}-no-sheets`,
+            comboNumber: "-",
+            user_name: order.user_name,
+            user_whatsapp: order.user_whatsapp,
+          },
+        ];
+      }
+
+      return comboNumbers.map((comboNumber) => ({
+        id: `order-${order.id}-sheet-${comboNumber}`,
+        comboNumber,
+        user_name: order.user_name,
+        user_whatsapp: order.user_whatsapp,
+      }));
+    });
+
+    return (
+      <div className="orders-compact-container">
+        {compactRows.map((row) => (
+          <div className="orders-compact-row" key={row.id}>
+            <span className="compact-combo">Combo #{row.comboNumber}</span>
+            <span className="compact-name">{row.user_name}</span>
+            <span className="compact-whatsapp">{row.user_whatsapp}</span>
+          </div>
+        ))}
+      </div>
+    );
   };
 
   // Sends PUT /orders/{id} with the full order + updated validation field.
@@ -200,6 +240,20 @@ function OrdersSection({ pricePerSheet }) {
               />
             </li>
             <li>
+              <button
+                id="toggleOrdersView"
+                onClick={() => {
+                  setIsCompactView((current) => !current);
+                  if (!isCompactView) {
+                    setIsValidating(false);
+                    setValidatingOrderIndex(null);
+                  }
+                }}
+              >
+                {isCompactView ? "Vista normal" : "Vista comprimida"}
+              </button>
+            </li>
+            <li>
               <button id="refreshOrders" onClick={refetchOrdersData}>
                 Actualizar
               </button>
@@ -208,73 +262,80 @@ function OrdersSection({ pricePerSheet }) {
         </div>
 
         <div id="orders-table-container">
-          <table id="orders-table">
-            <thead>
-              <tr>
-                <th>Nombre</th>
-                <th>WhatsApp</th>
-                <th>Combos</th>
-                <th>Cartones</th>
-                <th>Estado</th>
-              </tr>
-            </thead>
-            <tbody>
-              {tableOrders && tableOrders.length > 0 ? (
-                tableOrders.map((order, index) => {
-                  const statusLabel =
-                    order.payment_proof_validated === null
-                      ? "Pendiente"
-                      : order.payment_proof_validated
-                      ? "Validado"
-                      : "No válido";
-                  const statusClass =
-                    order.payment_proof_validated === null
-                      ? "status-pending"
-                      : order.payment_proof_validated
-                      ? "status-valid"
-                      : "status-invalid";
-
-                  return (
-                    <tr
-                      key={order.id}
-                      className={validatingOrderIndex === index ? "selected-row" : ""}
-                      onClick={() => handleClickShowValidatingModal(order)}
-                    >
-                      <td>{order.user_name}</td>
-                      <td>{order.user_whatsapp}</td>
-                      <td>
-                        {formatComboNumbers(getOrderComboNumbers(order)) || order.sheet_count}
-                      </td>
-                      <td className="tickets-container">
-                        <ul>
-                          {order.sheets?.map((sheet) => (
-                            <li key={sheet.id}>
-                              <a
-                                href={sheet.source_url}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                              >
-                                {sheet.tickets?.map((t) => t.id).join(", ")}
-                              </a>
-                            </li>
-                          ))}
-                        </ul>
-                      </td>
-                      <td>
-                        <span className={`order-status ${statusClass}`}>
-                          {statusLabel}
-                        </span>
-                      </td>
-                    </tr>
-                  );
-                })
-              ) : (
+          {isCompactView ? (
+            renderCompactOrders()
+          ) : (
+            <table id="orders-table">
+              <thead>
                 <tr>
-                  <td colSpan="5">No hay órdenes para el juego actual.</td>
+                  <th>Nombre</th>
+                  <th>WhatsApp</th>
+                  <th>Combos</th>
+                  <th>Cartones</th>
+                  <th>Estado</th>
                 </tr>
-              )}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {tableOrders && tableOrders.length > 0 ? (
+                  tableOrders.map((order, index) => {
+                    const statusLabel =
+                      order.payment_proof_validated === null
+                        ? "Pendiente"
+                        : order.payment_proof_validated
+                        ? "Validado"
+                        : "No válido";
+                    const statusClass =
+                      order.payment_proof_validated === null
+                        ? "status-pending"
+                        : order.payment_proof_validated
+                        ? "status-valid"
+                        : "status-invalid";
+
+                    return (
+                      <tr
+                        key={order.id}
+                        className={
+                          validatingOrderIndex === index ? "selected-row" : ""
+                        }
+                        onClick={() => handleClickShowValidatingModal(order)}
+                      >
+                        <td>{order.user_name}</td>
+                        <td>{order.user_whatsapp}</td>
+                        <td>
+                          {formatComboNumbers(getOrderComboNumbers(order)) ||
+                            order.sheet_count}
+                        </td>
+                        <td className="tickets-container">
+                          <ul>
+                            {order.sheets?.map((sheet) => (
+                              <li key={sheet.id}>
+                                <a
+                                  href={sheet.source_url}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                >
+                                  {sheet.tickets?.map((t) => t.id).join(", ")}
+                                </a>
+                              </li>
+                            ))}
+                          </ul>
+                        </td>
+                        <td>
+                          <span className={`order-status ${statusClass}`}>
+                            {statusLabel}
+                          </span>
+                        </td>
+                      </tr>
+                    );
+                  })
+                ) : (
+                  <tr>
+                    <td colSpan="5">No hay órdenes para el juego actual.</td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          )}
         </div>
       </section>
 

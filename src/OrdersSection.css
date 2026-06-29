@@ -97,6 +97,46 @@
   }
 }
 
+.orders-compact-container {
+  display: grid;
+  gap: 0.45rem;
+  padding: 0.5rem 0.25rem;
+}
+
+.orders-compact-row {
+  display: grid;
+  grid-template-columns: 1fr 1.25fr 1fr;
+  gap: 0.75rem;
+  padding: 0.85rem 1rem;
+  border: 1px solid rgba(242, 177, 56, 0.15);
+  border-radius: 0.75rem;
+  background-color: rgba(255, 255, 255, 0.03);
+  align-items: center;
+  font-size: 0.95rem;
+}
+
+.orders-compact-row span {
+  display: inline-block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.compact-combo {
+  font-weight: 700;
+  color: #f2b138;
+}
+
+.compact-name,
+.compact-whatsapp {
+  color: #eee;
+}
+
+.compact-empty {
+  padding: 1rem;
+  color: #ccc;
+}
+
 .order-status {
   display: inline-flex;
   align-items: center;
