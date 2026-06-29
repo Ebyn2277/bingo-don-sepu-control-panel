@@ -8,8 +8,9 @@
   top: 0;
   left: 0;
 
-  background-color: rgb(0, 0, 0, 0.5);
+  background-color: rgba(0, 0, 0, 0.6);
   border: none;
+  z-index: 1500;
 }
 
 .event-overlay {
@@ -22,12 +23,13 @@
   cursor: pointer;
 }
 
+/* ── MODAL CONTENEDOR ───────────────────────────────────────────────────────── */
 .validating-modal {
   height: 90vh;
   width: 90vw;
+  max-width: 700px;
   margin-top: 5vh;
   z-index: 1000;
-
   padding-bottom: 0.5rem;
 
   display: grid;
@@ -40,56 +42,6 @@
   background-color: #222;
   border: 4px solid #161616;
   border-radius: 10px;
-
-  ul {
-    grid-column: 2;
-    grid-row: 2;
-
-    width: 100%;
-    height: 100%;
-    padding: 0.5rem;
-    overflow: hidden;
-
-    display: grid;
-    grid-template-columns: minmax(400px, 1fr) 400px;
-    grid-template-rows: repeat(9, 1fr);
-    justify-content: space-between;
-    align-self: space-between;
-    column-gap: 1rem;
-
-    background-color: #0003;
-  }
-
-  li {
-    grid-column: 2;
-
-    width: 400px;
-    height: 100%;
-    padding: 0.4rem;
-
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-
-    list-style: none;
-    font-size: 1.2rem;
-
-    &:nth-child(2n - 1) {
-      background-color: #333;
-    }
-
-    &:nth-child(9) {
-      background: none;
-    }
-
-    &:nth-child(10) {
-      padding: 0;
-    }
-  }
-
-  span {
-    font-weight: bold;
-  }
 }
 
 .section-header {
@@ -97,6 +49,48 @@
   grid-row: 1;
 }
 
+/* ── LISTA DE DATOS ─────────────────────────────────────────────────────────── */
+.validating-modal ul {
+  grid-column: 2;
+  grid-row: 2;
+
+  width: 100%;
+  height: 100%;
+  padding: 0.5rem;
+  overflow-y: auto;
+
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+
+  background-color: #0003;
+  list-style: none;
+}
+
+.validating-modal li {
+  width: 100%;
+  padding: 0.6rem 0.8rem;
+
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+
+  font-size: 1.1rem;
+}
+
+.validating-modal li:nth-child(odd) {
+  background-color: #333;
+  border-radius: 0.3rem;
+}
+
+.validating-modal span {
+  font-weight: bold;
+  text-align: right;
+}
+
+/* ── BOTONES DE NAVEGACIÓN ──────────────────────────────────────────────────── */
 .switch-order-button {
   grid-column: span 1;
   grid-row: 2;
@@ -105,122 +99,92 @@
 
   font-size: 2rem;
   border-radius: 0;
+  border: none;
 
   transition: background-color 0.2s ease-out, color 0.2s ease-out;
-  border: none;
-  &:hover {
-    background-color: #0006;
-    color: #bbb;
-  }
-
-  &:first-of-type {
-    margin-left: 0.5rem;
-  }
-
-  &:last-of-type {
-    margin-right: 0.5rem;
-  }
 }
+
+.switch-order-button:hover {
+  background-color: #0006;
+  color: #bbb;
+}
+
+.switch-order-button:first-of-type { margin-left: 0.5rem; }
+.switch-order-button:last-of-type  { margin-right: 0.5rem; }
 
 .close-modal-button {
   width: fit-content;
   padding: 0.5rem 1rem;
 }
 
-#payment-proof {
-  grid-column: 1;
-  grid-row: 1 / -1;
-
-  width: auto;
-  height: 100%;
-
-  padding: 0;
-
-  position: relative;
+/* ── CARTONES ASIGNADOS ─────────────────────────────────────────────────────── */
+.validating-modal li span a {
+  display: inline-block;
+  padding: 0.2rem 0.5rem;
+  margin: 0.1rem;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #b3bf5a;
+  text-decoration: underline;
+  word-break: break-all;
 }
 
-#payment-proof-image-container {
-  width: 100%;
-  height: 100%;
+.validating-modal li span a:hover { opacity: 0.8; }
 
-  overflow: auto;
+/* ── ESTADOS DE VALIDACIÓN ──────────────────────────────────────────────────── */
+.pendiente { color: orange;  font-weight: bold; }
+.valido    { color: #4caf50; font-weight: bold; }
+.no-valido { color: #f44336; font-weight: bold; }
 
-  img {
-    display: block;
-    width: auto;
-    height: 100%;
-
-    margin: auto;
-  }
-}
-
-#change-image-size-buttons {
-  padding: 0.5rem;
-  position: absolute;
-  right: 0;
-  bottom: 0;
-
-  display: flex;
-  gap: 0.3rem;
-
-  button {
-    font-size: 2rem;
-    padding: 0.8rem 1.2rem;
-    border-radius: 2px;
-    background-color: #0006;
-
-    &:hover {
-      background-color: #000c;
-    }
-  }
-}
-
+/* ── BOTONES DE ACCIÓN DE VALIDACIÓN ───────────────────────────────────────── */
 #validation-buttons-container {
   width: 100%;
-
   display: flex;
-  justify-content: space-evenly;
-  gap: 0.2rem;
-
-  button {
-    width: 100%;
-    padding: 1rem 0;
-
-    font-weight: bold;
-    border: none;
-
-    &:hover {
-      opacity: 0.8;
-      color: #ddd;
-      text-decoration: underline;
-    }
-
-    &:first-of-type {
-      border-radius: 0.5rem 0 0 0.5rem;
-    }
-
-    &:last-of-type {
-      border-radius: 0 0.5rem 0.5rem 0;
-    }
-  }
+  justify-content: stretch;
+  gap: 0.3rem;
 }
 
-#validation-buttons-container > .validate-confirm-button {
-  background-color: green;
+#validation-buttons-container button {
+  flex: 1;
+  padding: 0.8rem 0;
+  font-weight: bold;
+  font-size: 0.95rem;
+  letter-spacing: 0.5px;
+  border: none;
+  color: #fff;
+  text-shadow: 0 1px 3px #0005;
 }
 
-#validation-buttons-container > .validate-cancel-button {
-  background-color: red;
+#validation-buttons-container button:hover {
+  opacity: 0.85;
+  text-decoration: underline;
 }
 
-.pendiente {
-  color: orange;
+#validation-buttons-container button:first-child { border-radius: 0.4rem 0 0 0.4rem; }
+#validation-buttons-container button:last-child   { border-radius: 0 0.4rem 0.4rem 0; }
+
+.validate-confirm-button { background-color: #388e3c; }
+.validate-pending-button { background-color: #f57c00; border-radius: 0 !important; }
+.validate-cancel-button  { background-color: #c62828; }
+
+/* ── BOTÓN ELIMINAR RESERVA ─────────────────────────────────────────────────── */
+.delete-order-button {
+  width: 100%;
+  height: auto;
+  padding: 0.7rem 1rem;
+
+  font-size: 1rem;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+
+  background-color: transparent;
+  border: 2px solid #c62828;
+  border-radius: 0.4rem;
+  color: #f44336;
+
+  transition: background-color 0.2s, color 0.2s;
 }
 
-.valido {
-  color: green;
-}
-
-.no-valido {
-  color: red;
+.delete-order-button:hover {
+  background-color: #c6282822;
 }

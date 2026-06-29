@@ -6,7 +6,7 @@ import useFetch from "./hooks/useFetch";
 import OrderValidationModal from "./OrderValidationModal";
 
 function OrdersSection({ pricePerSheet }) {
-  const apiUrl = import.meta.env.VITE_API_URL
+  const apiUrl = import.meta.env.VITE_API_URL;
   const { accessToken, logout } = useContext(AuthContext);
   const [tableOrders, setTableOrders] = useState();
   const [searchParam, setSearchParam] = useState("");
@@ -26,10 +26,7 @@ function OrdersSection({ pricePerSheet }) {
 
   const { data: ordersData, refetch: refetchOrdersData } = useFetch(
     apiUrl + "api/orders",
-    {
-      method: "GET",
-      headers,
-    },
+    { method: "GET", headers },
     [accessToken]
   );
 
@@ -37,10 +34,10 @@ function OrdersSection({ pricePerSheet }) {
     setTableOrders(ordersData);
   }, [ordersData]);
 
+  // Sends PUT /orders/{id} with the full order + updated validation field.
+  // Accepts true (valid), false (invalid), or null (reset to pending).
   const validateOrder = async (isValid) => {
     if (validatingOrderIndex === null) return;
-
-    console.log("Validating order:", isValid);
 
     const updatedOrder = {
       ...tableOrders[validatingOrderIndex],
@@ -49,62 +46,77 @@ function OrdersSection({ pricePerSheet }) {
 
     try {
       const response = await fetch(
-        `https://protestant-vinni-bingo-don-sepu-66e57ef7.koyeb.app/api/orders/${updatedOrder.id}`,
+        `${apiUrl}api/orders/${updatedOrder.id}`,
         {
           method: "PUT",
           headers,
           body: JSON.stringify(updatedOrder),
         }
       );
+
       if (!response.ok) {
         const errorData = await response.json();
-        if (errorData.message) {
-          if (
-            response.status === 401 &&
-            errorData.message === "Unauthenticated."
-          ) {
-            console.error("User is unauthenticated, logging out.");
-            logout();
-            return;
-          }
-
-          throw new Error(
-            "Failed to fetch data: ",
-            errorData.message,
-            response.status
-          );
+        if (response.status === 401 && errorData.message === "Unauthenticated.") {
+          logout();
+          return;
         }
-        throw new Error("Failed to fetch data:", errorData, response.status);
+        throw new Error(errorData.message || "Error al validar la orden.");
       }
 
-      refetchOrdersData(); // Refresh orders data after validation
+      await refetchOrdersData();
     } catch (error) {
       console.error("Error validating order:", error);
+      alert("Error al actualizar el estado de la orden.");
+    }
+  };
+
+  // Sends DELETE /orders/{id} — frees sheets, closes modal on success.
+  const deleteOrder = async (orderId) => {
+    try {
+      const response = await fetch(
+        `${apiUrl}api/orders/${orderId}`,
+        { method: "DELETE", headers }
+      );
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        if (response.status === 401 && errorData.message === "Unauthenticated.") {
+          logout();
+          return;
+        }
+        throw new Error(errorData.error || "Error al eliminar la reserva.");
+      }
+
+      setIsValidating(false);
+      setValidatingOrderIndex(null);
+      await refetchOrdersData();
+    } catch (error) {
+      console.error("Error deleting order:", error);
+      alert(error.message);
     }
   };
 
   const handleClickShowValidatingModal = (order) => {
-    if (!isValidating) setIsValidating(true);
+    setIsValidating(true);
     setValidatingOrderIndex(tableOrders.findIndex((o) => o.id === order.id));
   };
 
   const handleOnChangeOrdersSearch = (e) => {
     clearTimeout(timeoutRef.current);
-
     timeoutRef.current = setTimeout(() => {
       setSearchParam(e.target.value);
     }, 500);
   };
 
   useEffect(() => {
-    const filteredOrders = ordersData?.filter(
+    if (!ordersData) return;
+    const filtered = ordersData.filter(
       (order) =>
         order.user_whatsapp.includes(searchParam) ||
         order.user_name.includes(searchParam)
     );
-
-    setTableOrders(filteredOrders);
-  }, [searchParam]);
+    setTableOrders(filtered);
+  }, [searchParam, ordersData]);
 
   return (
     <>
@@ -115,7 +127,6 @@ function OrdersSection({ pricePerSheet }) {
             <li>
               <input
                 type="search"
-                name=""
                 id="orders-search"
                 placeholder="Buscar... (WhatsApp/Nombre)"
                 onChange={handleOnChangeOrdersSearch}
@@ -128,19 +139,20 @@ function OrdersSection({ pricePerSheet }) {
             </li>
           </ul>
         </div>
+
         <div id="orders-table-container">
           <table id="orders-table">
             <thead>
               <tr>
                 <th>ID</th>
                 <th>Nombre</th>
-                <th>Número de Whatsapp</th>
-                <th>Número de Combos</th>
-                <th>Tableros</th>
-                <th>Total Pagado</th>
-                <th>Fecha de Compra</th>
-                <th>Hora de Compra</th>
-                <th>Estado de Validación</th>
+                <th>WhatsApp</th>
+                <th>Combos</th>
+                <th>Cartones (tickets)</th>
+                <th>Total</th>
+                <th>Fecha</th>
+                <th>Hora</th>
+                <th>Validación</th>
               </tr>
             </thead>
             <tbody>
@@ -153,17 +165,14 @@ function OrdersSection({ pricePerSheet }) {
                     <td>{order.sheet_count}</td>
                     <td className="tickets-container">
                       <ul>
-                        {order.sheets.map((sheet) => (
-                          <li>
+                        {order.sheets?.map((sheet) => (
+                          <li key={sheet.id}>
                             <a
-                              key={`ticket-url-${sheet.id}`}
                               href={sheet.source_url}
                               target="_blank"
                               rel="noopener noreferrer"
                             >
-                              {sheet.tickets
-                                .map((ticket) => ticket.id)
-                                .join(", ")}
+                              {sheet.tickets?.map((t) => t.id).join(", ")}
                             </a>
                           </li>
                         ))}
@@ -186,21 +195,22 @@ function OrdersSection({ pricePerSheet }) {
                         {order.payment_proof_validated === null
                           ? "Pendiente"
                           : order.payment_proof_validated
-                          ? "Valido"
-                          : "No Valido"}
+                          ? "Válido"
+                          : "No válido"}
                       </button>
                     </td>
                   </tr>
                 ))
               ) : (
                 <tr>
-                  <td colSpan="6">No hay órdenes disponibles.</td>
+                  <td colSpan="9">No hay órdenes para el juego actual.</td>
                 </tr>
               )}
             </tbody>
           </table>
         </div>
       </section>
+
       {isValidating && validatingOrderIndex !== null && (
         <OrderValidationModal
           validatingOrder={tableOrders[validatingOrderIndex]}
@@ -209,6 +219,7 @@ function OrdersSection({ pricePerSheet }) {
           setIsValidating={setIsValidating}
           pricePerSheet={pricePerSheet}
           validateOrder={validateOrder}
+          deleteOrder={deleteOrder}
         />
       )}
     </>

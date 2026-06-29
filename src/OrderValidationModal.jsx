@@ -4,10 +4,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faAngleLeft,
   faAngleRight,
-  faPlus,
-  faMinus,
 } from "@fortawesome/free-solid-svg-icons";
-import { useState } from "react";
 
 function OrderValidationModal({
   validatingOrder,
@@ -16,157 +13,138 @@ function OrderValidationModal({
   setIsValidating,
   pricePerSheet,
   validateOrder,
+  deleteOrder,
 }) {
-  const [imageSize, setImageSize] = useState(100);
-
-  const handleOnClickIncreaseImageSize = () => {
-    setImageSize((prevSize) => prevSize + 25);
-  };
-
-  const handleOnClickDecreaseImageSize = () => {
-    if (imageSize > 50) setImageSize((prevSize) => prevSize - 25);
-  };
-
   const handleOnClickCloseModal = () => {
     setIsValidating(false);
   };
 
   const handleOnClickChangeOrder = (isNext) => {
     if (isNext) {
-      setValidatingOrderIndex((prevIndex) =>
-        prevIndex < tableOrdersLength - 1 ? prevIndex + 1 : 0
+      setValidatingOrderIndex((prev) =>
+        prev < tableOrdersLength - 1 ? prev + 1 : 0
       );
     } else {
-      setValidatingOrderIndex((prevIndex) =>
-        prevIndex > 0 ? prevIndex - 1 : tableOrdersLength - 1
+      setValidatingOrderIndex((prev) =>
+        prev > 0 ? prev - 1 : tableOrdersLength - 1
       );
     }
   };
 
+  const validationState =
+    validatingOrder.payment_proof_validated === null
+      ? "pendiente"
+      : validatingOrder.payment_proof_validated
+      ? "valido"
+      : "no-valido";
+
+  const validationLabel =
+    validatingOrder.payment_proof_validated === null
+      ? "PENDIENTE"
+      : validatingOrder.payment_proof_validated
+      ? "VÁLIDO"
+      : "NO VÁLIDO";
+
   return (
     <div className="validating-modal-container">
-      <div className="event-overlay" onClick={handleOnClickCloseModal}></div>{" "}
-      {/** Overlay to close the modal on click */}
+      <div className="event-overlay" onClick={handleOnClickCloseModal} />
+
       <div className="validating-modal">
         <div className="section-header">
           <h2>Validación de Compra</h2>
-          <button
-            className="close-modal-button"
-            onClick={handleOnClickCloseModal}
-          >
+          <button className="close-modal-button" onClick={handleOnClickCloseModal}>
             Cerrar
           </button>
         </div>
+
         <button
           className="switch-order-button"
-          onClick={() => {
-            handleOnClickChangeOrder(false);
-          }}
+          onClick={() => handleOnClickChangeOrder(false)}
         >
           <FontAwesomeIcon icon={faAngleLeft} />
         </button>
-        <ul>
-          <li>
-            ID de compra: <span>{validatingOrder.id}</span>
-          </li>
-          <li>
-            Nombre: <span>{validatingOrder.user_name}</span>
-          </li>
-          <li>
-            Número de Whatsapp: <span>{validatingOrder.user_whatsapp}</span>
-          </li>
-          <li>
-            Número de Cartones: <span>{validatingOrder.sheet_count}</span>
-          </li>
-          <li>
-            Total Pagado:
-            <span>$ {validatingOrder.total_amount.toFixed(2)}</span>
-          </li>
-          <li>
-            Fecha de Compra:{" "}
-            <span>
-              {new Date(validatingOrder.created_at).toLocaleDateString()}
-            </span>
-          </li>
-          <li>
-            Hora de Compra:{" "}
-            <span>
-              {new Date(validatingOrder.created_at).toLocaleTimeString()}
-            </span>
-          </li>
-          <li id="payment-proof">
-            {validatingOrder.payment_proof_source_url ? (
-              <>
-                <div id="payment-proof-image-container">
-                  <img
-                    src={`${validatingOrder.payment_proof_source_url}`}
-                    style={{ height: imageSize + "%" }}
-                  ></img>
-                </div>
 
-                <div id="change-image-size-buttons">
-                  <button
-                    id="increase-image-size-button"
-                    onClick={handleOnClickIncreaseImageSize}
-                  >
-                    <FontAwesomeIcon icon={faPlus} />
-                  </button>
-                  <button
-                    id="decrease-image-size-button"
-                    onClick={handleOnClickDecreaseImageSize}
-                  >
-                    <FontAwesomeIcon icon={faMinus} />
-                  </button>
-                </div>
-              </>
-            ) : (
-              "No disponible"
-            )}
+        <ul>
+          <li>ID de compra: <span>{validatingOrder.id}</span></li>
+          <li>Nombre: <span>{validatingOrder.user_name}</span></li>
+          <li>WhatsApp: <span>{validatingOrder.user_whatsapp}</span></li>
+          <li>Cartones: <span>{validatingOrder.sheet_count}</span></li>
+          <li>
+            Total:
+            <span>${validatingOrder.total_amount.toFixed(2)}</span>
           </li>
           <li>
-            Estado de Validación:{" "}
-            <span
-              className={`${
-                validatingOrder.payment_proof_validated === null
-                  ? "pendiente"
-                  : validatingOrder.payment_proof_validated
-                  ? "valido"
-                  : "no-valido"
-              }`}
-            >
-              {validatingOrder.payment_proof_validated === null
-                ? "PENDIENTE"
-                : validatingOrder.payment_proof_validated
-                ? "VALIDO"
-                : "NO VALIDO"}
+            Fecha:{" "}
+            <span>{new Date(validatingOrder.created_at).toLocaleDateString()}</span>
+          </li>
+          <li>
+            Hora:{" "}
+            <span>{new Date(validatingOrder.created_at).toLocaleTimeString()}</span>
+          </li>
+          <li>
+            Cartones asignados:
+            <span>
+              {validatingOrder.sheets?.map((sheet) => (
+                <span key={sheet.id} style={{ display: "block" }}>
+                  <a href={sheet.source_url} target="_blank" rel="noopener noreferrer">
+                    {sheet.tickets?.map((t) => t.id).join(", ")}
+                  </a>
+                </span>
+              ))}
             </span>
           </li>
+          <li>
+            Estado:{" "}
+            <span className={validationState}>{validationLabel}</span>
+          </li>
+
           <li>
             <div id="validation-buttons-container">
               <button
                 className="validate-confirm-button"
-                onClick={() => {
-                  validateOrder(true);
-                }}
+                onClick={() => validateOrder(true)}
               >
-                ES VALIDO
+                ES VÁLIDO
+              </button>
+              <button
+                className="validate-pending-button"
+                onClick={() => validateOrder(null)}
+              >
+                PENDIENTE
               </button>
               <button
                 className="validate-cancel-button"
-                onClick={() => {
-                  validateOrder(false);
-                }}
+                onClick={() => validateOrder(false)}
               >
-                NO ES VALIDO
+                NO ES VÁLIDO
               </button>
             </div>
           </li>
+
+          {/* Only allow deleting non-validated orders */}
+          {validatingOrder.payment_proof_validated !== true && (
+            <li>
+              <button
+                className="delete-order-button"
+                onClick={() => {
+                  if (
+                    window.confirm(
+                      `¿Eliminar la reserva #${validatingOrder.id}? Los cartones quedarán disponibles nuevamente.`
+                    )
+                  ) {
+                    deleteOrder(validatingOrder.id);
+                  }
+                }}
+              >
+                Eliminar reserva y liberar cartones
+              </button>
+            </li>
+          )}
         </ul>
+
         <button
           className="switch-order-button"
-          onClick={() => {
-            handleOnClickChangeOrder(true);
-          }}
+          onClick={() => handleOnClickChangeOrder(true)}
         >
           <FontAwesomeIcon icon={faAngleRight} />
         </button>
