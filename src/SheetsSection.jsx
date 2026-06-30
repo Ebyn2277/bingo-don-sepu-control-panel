@@ -141,6 +141,9 @@ function SheetsSection({ setIsSearchTicketModalOpen }) {
 
   const fetchProcessingSheetsState = async () => {
     try {
+      // Wait for backend to start creating jobs after upload
+      await new Promise((resolve) => setTimeout(resolve, 10000));
+
       const response = await fetch(
         apiUrl + "api/sheets/uploading-status",
         {
