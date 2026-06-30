@@ -158,6 +158,8 @@ function OrdersSection({ pricePerSheet }) {
       }
 
       await refetchOrdersData();
+      setIsValidating(false);
+      setValidatingOrderIndex(null);
     } catch (error) {
       console.error("Error validating order:", error);
       alert("Error al actualizar el estado de la orden.");

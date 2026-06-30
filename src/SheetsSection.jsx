@@ -107,7 +107,7 @@ function SheetsSection({ setIsSearchTicketModalOpen }) {
         fileInputRef.current.value = "";
       }
 
-      setInitialUnprocessedSheetsCount(data.sheets_count);
+      setInitialUnprocessedSheetsCount(data.sheets_count ?? 0);
     } catch (error) {
       console.error(error);
     }
@@ -155,7 +155,7 @@ function SheetsSection({ setIsSearchTicketModalOpen }) {
 
       if (tempUnprocessedSheetsCount > 0) {
         await new Promise((resolve) => setTimeout(resolve, 1000));
-        fetchProcessingSheetsState();
+        await fetchProcessingSheetsState();
       } else {
         setInitialUnprocessedSheetsCount(null);
         setUploadedSheetsCount(null);
