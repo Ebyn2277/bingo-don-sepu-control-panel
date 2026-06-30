@@ -5,10 +5,16 @@
 }
 
 .dashboard {
+
+  /**
   display: grid;
   grid-template-columns: repeat(2, minmax(300px, 1fr));
   grid-template-rows: auto auto;
+  gap: 1rem;*/
+
+  display: flex;
   gap: 1rem;
+  flex-wrap: wrap;
 }
 
 #logoutButton {
@@ -18,16 +24,18 @@
   letter-spacing: 2px;
 }
 
+/*
 @media (max-width: 900px) {
   .dashboard {
     grid-template-columns: 1fr;
   }
 }
-
+*/
 .payment-gateway-section,
 .validating-modal-container,
 .sheets-section,
-.orders-section {
+.orders-section,
+.game-settings-section {
   border: 4px solid #161616;
   border-radius: 10px;
   background-color: #222;
@@ -35,15 +43,31 @@
   box-shadow: 0 0 20px #0008;
 }
 
+.payment-gateway-section,
+.game-settings-section,
 .sheets-section {
-  margin-right: 1rem;
+  flex-grow:1;
+}
+
+.sheets-section {
   padding-bottom: 1rem;
+  order: 10;
 }
 
 .orders-section {
-  grid-row: 2 / 3;
-  grid-column: span 2;
+  /**grid-row: 2 / 3;
+  grid-column: span 2;*/
+  width: 100%;
   overflow: auto;
+  order: -1;
+}
+
+.payment-gateway-section {
+  order: 3;
+}
+
+.game-settings-section {
+  order: 9;
 }
 
 .section-header {
@@ -60,6 +84,17 @@
     height: 40px;
     background: none;
     letter-spacing: 1px;
-    text-decoration: underline;
+    font-weight: bold;
+    color: #f2b138ee;
+    border: 2px solid #f2b138ee;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.2s, color 0.2s, opacity 0.2s;
+  }
+
+  button:hover {
+    background-color: #f2b138ee;
+    color: #111;
+    opacity: 0.9;
   }
 }

@@ -119,7 +119,7 @@ function OrdersSection({ pricePerSheet }) {
       <div className="orders-compact-container">
         {compactRows.map((row) => (
           <div className="orders-compact-row" key={row.id}>
-            <span className="compact-combo">Combo #{row.comboNumber}</span>
+            <span className="compact-combo">#{row.comboNumber}</span>
             <span className="compact-name">{row.user_name}</span>
             <span className="compact-whatsapp">{row.user_whatsapp}</span>
           </div>
