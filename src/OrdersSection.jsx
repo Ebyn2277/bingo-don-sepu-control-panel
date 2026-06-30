@@ -227,6 +227,15 @@ function OrdersSection({ pricePerSheet }) {
     setTableOrders(filtered);
   }, [searchParam, ordersData]);
 
+  // Auto-refetch orders data periodically (every 8 seconds)
+  useEffect(() => {
+    const autoRefreshInterval = setInterval(() => {
+      refetchOrdersData();
+    }, 8000);
+    
+    return () => clearInterval(autoRefreshInterval);
+  }, []); // Empty dependency array - interval is always created
+
   return (
     <>
       <section className="orders-section">

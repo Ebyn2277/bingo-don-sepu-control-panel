@@ -117,6 +117,28 @@ function SheetsSection({ setIsSearchTicketModalOpen }) {
     initialUnprocessedSheetsCount !== null && fetchProcessingSheetsState();
   }, [initialUnprocessedSheetsCount]);
 
+  // Auto-refetch sheets data while uploading - more aggressive during processing
+  useEffect(() => {
+    if (!isProcessingSheets) return;
+    
+    const refetchInterval = setInterval(() => {
+      refetchSheetsData();
+    }, 1000);
+    
+    return () => clearInterval(refetchInterval);
+  }, [isProcessingSheets]); // Removed refetchSheetsData from dependencies to prevent recreation
+
+  // Auto-refetch sheets data periodically (every 8 seconds) when not processing
+  useEffect(() => {
+    if (isProcessingSheets) return; // Don't use this interval while actively processing
+    
+    const autoRefreshInterval = setInterval(() => {
+      refetchSheetsData();
+    }, 8000);
+    
+    return () => clearInterval(autoRefreshInterval);
+  }, [isProcessingSheets]);
+
   const fetchProcessingSheetsState = async () => {
     try {
       const response = await fetch(
