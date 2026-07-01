@@ -54,6 +54,7 @@
 
 .modal-summary {
   display: flex;
+  flex-wrap: wrap;
   justify-content: space-between;
   align-items: center;
   gap: 0.5rem;
@@ -63,6 +64,10 @@
   background-color: #1f1f1f;
   border: 1px solid #2d2d2d;
   border-radius: 0.75rem;
+
+  > * {
+    flex: 1 1 0;
+  }
 }
 
 .summary-name {
@@ -73,6 +78,14 @@
 .summary-combos {
   color: #ccc;
   font-weight: 600;
+}
+
+.modal-tickets-container {
+  min-width: 100%;
+
+  li {
+    display: inline-block;
+  }
 }
 
 .confirmation-details {

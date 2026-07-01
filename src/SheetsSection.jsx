@@ -113,6 +113,8 @@ function SheetsSection({ setIsSearchTicketModalOpen }) {
     }
   };
 
+
+
   useEffect(() => {
     initialUnprocessedSheetsCount !== null && fetchProcessingSheetsState();
   }, [initialUnprocessedSheetsCount]);
@@ -186,11 +188,43 @@ function SheetsSection({ setIsSearchTicketModalOpen }) {
         setUploadedSheetsCount(null);
         setIsProcessingSheets(false);
         await refetchSheetsData();
+
+        // After processing finishes, automatically reset the game
+        try {
+          const resetResponse = await fetch(
+            apiUrl + "api/payment-gateways/reset-game",
+            {
+              method: "POST",
+              headers,
+            }
+          );
+
+          if (!resetResponse.ok) {
+            const resetError = await resetResponse.json().catch(() => ({}));
+            if (
+              resetResponse.status === 401 &&
+              resetError.message === "Unauthenticated."
+            ) {
+              logout();
+              return;
+            }
+            console.error("Failed to reset game:", resetError);
+          } else {
+            const resetData = await resetResponse.json();
+            console.log("Game reset completed:", resetData);
+            // Refresh sheets data after reset to reflect freed/updated sheets
+            await refetchSheetsData();
+          }
+        } catch (error) {
+          console.error("Error while resetting game:", error);
+        }
       }
     } catch (error) {
       console.error(error);
     }
   };
+
+
 
   return (
     <section className="sheets-section">

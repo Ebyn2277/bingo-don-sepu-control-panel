@@ -282,7 +282,6 @@ function OrdersSection({ pricePerSheet }) {
                   <th>Nombre</th>
                   <th>WhatsApp</th>
                   <th>Combos</th>
-                  <th>Cartones</th>
                   <th>Estado</th>
                 </tr>
               </thead>
@@ -316,21 +315,6 @@ function OrdersSection({ pricePerSheet }) {
                           {formatComboNumbers(getOrderComboNumbers(order)) ||
                             order.sheet_count}
                         </td>
-                        <td className="tickets-container">
-                          <ul>
-                            {order.sheets?.map((sheet) => (
-                              <li key={sheet.id}>
-                                <a
-                                  href={sheet.source_url}
-                                  target="_blank"
-                                  rel="noopener noreferrer"
-                                >
-                                  {sheet.tickets?.map((t) => t.id).join(", ")}
-                                </a>
-                              </li>
-                            ))}
-                          </ul>
-                        </td>
                         <td>
                           <span className={`order-status ${statusClass}`}>
                             {statusLabel}
@@ -341,7 +325,7 @@ function OrdersSection({ pricePerSheet }) {
                   })
                 ) : (
                   <tr>
-                    <td colSpan="5">No hay órdenes para el juego actual.</td>
+                    <td colSpan="4">No hay órdenes para el juego actual.</td>
                   </tr>
                 )}
               </tbody>
@@ -354,6 +338,7 @@ function OrdersSection({ pricePerSheet }) {
         <OrderValidationModal
           validatingOrder={tableOrders[validatingOrderIndex]}
           comboLabel={formatComboNumbers(getOrderComboNumbers(tableOrders[validatingOrderIndex]))}
+          orderComboNumbers={getOrderComboNumbers(tableOrders[validatingOrderIndex])}
           setIsValidating={setIsValidating}
           validateOrder={validateOrder}
           deleteOrder={deleteOrder}

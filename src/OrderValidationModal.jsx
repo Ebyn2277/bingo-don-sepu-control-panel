@@ -8,6 +8,7 @@ function OrderValidationModal({
   setIsValidating,
   validateOrder,
   deleteOrder,
+  orderComboNumbers,
 }) {
   const [open, setOpen] = useState(false);
 
@@ -37,6 +38,24 @@ function OrderValidationModal({
           <p className="summary-combos">
             {comboLabel ? `Combos ${comboLabel}` : `${validatingOrder.sheet_count} combos`}
           </p>
+          {validatingOrder.sheets?.length > 0 && (
+            <div className="modal-tickets-container">
+              <p className="tickets-title">Cartones:</p>
+              <ul>
+                {validatingOrder.sheets?.map((sheet) => (
+                  <li key={sheet.id}>
+                    <a
+                      href={sheet.source_url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      {sheet.tickets?.map((t) => t.id).join(", ")}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
         </div>
 
         <div id="validation-buttons-container">
