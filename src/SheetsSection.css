@@ -1,7 +1,7 @@
 .sheets-section span {
   width: 40%;
   padding: 0.2rem;
-  background-color: #161616a;
+  background-color: #161616aa;
   border-radius: 10px;
   font-size: 2rem;
   font-weight: bold;
@@ -19,6 +19,7 @@
     justify-content: space-between;
     align-items: center;
     list-style: none;
+    gap: 1rem;
   }
 }
 
@@ -63,6 +64,18 @@
     text-align: center;
     font-size: 2rem;
     font-weight: bold;
+  }
+}
+
+@media (max-width: 600px) {
+  #upload-sheets-form {
+    display: flex;
+    flex-direction: column;
+    
+    input {
+      width: 100%;
+      font-size: 1.5rem;
+    }
   }
 }
 

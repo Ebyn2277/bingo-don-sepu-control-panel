@@ -313,15 +313,6 @@ function SheetsSection({ setIsSearchTicketModalOpen }) {
             </button>
           </form>
         ))}
-
-      {isProcessingSheets && (
-        <div className="processing-sheets-state-container">
-          <p>Combos Subidos:</p>
-          <span>
-            {uploadedSheetsCount ?? 0} / {initialUnprocessedSheetsCount ?? 0}
-          </span>
-        </div>
-      )}
     </section>
   );
 }
