@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect, useContext, useMemo } from "react";
+import { useState, useRef, useEffect, useContext, useMemo, useCallback } from "react";
 import "./Dashboard.css";
 import "./OrdersSection.css";
 import { AuthContext } from "./context/AuthContext";
@@ -39,7 +39,7 @@ function OrdersSection({ pricePerSheet }) {
   const [currentSheets, setCurrentSheets] = useState([]);
 
   useEffect(() => {
-    setTableOrders(ordersData);
+    setTableOrders(sortOrders(ordersData));
   }, [ordersData]);
 
   useEffect(() => {
@@ -88,6 +88,34 @@ function OrdersSection({ pricePerSheet }) {
     ranges.push(start === end ? `${start}` : `${start}-${end}`);
     return ranges.join(", ");
   };
+
+  const sortOrders = useCallback(
+    (orders) => {
+      if (!orders) return orders;
+
+      const statusPriority = (order) =>
+        order.payment_proof_validated === null
+          ? 0
+          : order.payment_proof_validated
+          ? 1
+          : 2;
+
+      return [...orders].sort((a, b) => {
+        const pa = statusPriority(a);
+        const pb = statusPriority(b);
+        if (pa !== pb) return pa - pb;
+
+        const aCombos = getOrderComboNumbers(a);
+        const bCombos = getOrderComboNumbers(b);
+        const aMin = aCombos.length ? aCombos[0] : Number.MAX_SAFE_INTEGER;
+        const bMin = bCombos.length ? bCombos[0] : Number.MAX_SAFE_INTEGER;
+        if (aMin !== bMin) return aMin - bMin;
+
+        return a.id - b.id;
+      });
+    },
+    [sheetIdToComboNumber]
+  );
 
   const renderCompactOrders = () => {
     if (!tableOrders || tableOrders.length === 0) {
@@ -224,7 +252,7 @@ function OrdersSection({ pricePerSheet }) {
         order.user_whatsapp.includes(searchParam) ||
         order.user_name.includes(searchParam)
     );
-    setTableOrders(filtered);
+    setTableOrders(sortOrders(filtered));
   }, [searchParam, ordersData]);
 
   // Auto-refetch orders data periodically (every 8 seconds)
