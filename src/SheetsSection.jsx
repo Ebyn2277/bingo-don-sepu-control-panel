@@ -19,6 +19,7 @@ function SheetsSection({ setIsSearchTicketModalOpen }) {
   const fileInputRef = useRef(null);
   const [availableSheets, setAvailableSheets] = useState(null);
   const [totalSheets, setTotalSheets] = useState(null);
+  const [pendingValidationCount, setPendingValidationCount] = useState(0);
 
   const headers = useMemo(
     () => ({
@@ -40,6 +41,7 @@ function SheetsSection({ setIsSearchTicketModalOpen }) {
 
   useEffect(() => {
     setAvailableSheets(sheetsData?.available_sheets_count ?? 0);
+    setPendingValidationCount(sheetsData?.pending_validation_count ?? 0);
     setTotalSheets(sheetsData?.last_sheets_submitted_count ?? 0);
   }, [sheetsData]);
 
@@ -242,15 +244,19 @@ function SheetsSection({ setIsSearchTicketModalOpen }) {
       <ul id="info-container">
         <li>
           <p>Número de combos disponibles:</p>
-          <span>
-            {availableSheets} / {totalSheets}
-          </span>
+          <span>{availableSheets}</span>
         </li>
         <li>
-          <p>Número de combos vendidos:</p>
-          <span>
-            {totalSheets - availableSheets} / {totalSheets}
-          </span>
+          <p>Número de combos pendientes por validar:</p>
+          <span>{pendingValidationCount}</span>
+        </li>
+        <li>
+          <p>Número de combos validados:</p>
+          <span>{Math.max(0, (totalSheets ?? 0) - (availableSheets ?? 0) - (pendingValidationCount ?? 0))}</span>
+        </li>
+        <li>
+          <p>Número total de combos:</p>
+          <span>{totalSheets}</span>
         </li>
       </ul>
 
