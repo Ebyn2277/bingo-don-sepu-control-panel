@@ -4,17 +4,23 @@ import "./OrdersSection.css";
 import { AuthContext } from "./context/AuthContext";
 import useFetch from "./hooks/useFetch";
 import OrderValidationModal from "./OrderValidationModal";
+import DownloadCombosModal from "./DownloadCombosModal";
 
 function OrdersSection({ pricePerSheet }) {
   const apiUrl = import.meta.env.VITE_API_URL;
   const { accessToken, logout } = useContext(AuthContext);
   const [tableOrders, setTableOrders] = useState();
+  const [searchInput, setSearchInput] = useState("");
   const [searchParam, setSearchParam] = useState("");
   const timeoutRef = useRef();
 
   const [isValidating, setIsValidating] = useState(false);
   const [validatingOrderIndex, setValidatingOrderIndex] = useState(null);
   const [isCompactView, setIsCompactView] = useState(false);
+
+  const [isDownloadModalOpen, setIsDownloadModalOpen] = useState(false);
+  const [downloadOrderIndex, setDownloadOrderIndex] = useState(null);
+  const [searchMode, setSearchMode] = useState("text");
 
   const headers = useMemo(
     () => ({
@@ -238,22 +244,58 @@ function OrdersSection({ pricePerSheet }) {
     }
   };
 
+  const handleClickShowDownloadModal = (order) => {
+    const idx = tableOrders.findIndex((o) => o.id === order.id);
+
+    if (isDownloadModalOpen) {
+      if (downloadOrderIndex === idx) return;
+      setIsDownloadModalOpen(false);
+      setTimeout(() => {
+        setDownloadOrderIndex(idx);
+        setIsDownloadModalOpen(true);
+      }, 160);
+    } else {
+      setDownloadOrderIndex(idx);
+      setIsDownloadModalOpen(true);
+    }
+  };
+
   const handleOnChangeOrdersSearch = (e) => {
+    const value = e.target.value;
+    setSearchInput(value);
     clearTimeout(timeoutRef.current);
     timeoutRef.current = setTimeout(() => {
-      setSearchParam(e.target.value);
+      setSearchParam(value);
     }, 500);
+  };
+
+  const toggleSearchMode = () => {
+    setSearchMode((current) => (current === "text" ? "combo" : "text"));
+    setSearchInput("");
+    setSearchParam("");
   };
 
   useEffect(() => {
     if (!ordersData) return;
-    const filtered = ordersData.filter(
-      (order) =>
-        order.user_whatsapp.includes(searchParam) ||
-        order.user_name.includes(searchParam)
-    );
+    const param = searchParam.trim();
+    const isNum = /^\d+$/.test(param);
+    const parsedNum = isNum ? parseInt(param, 10) : null;
+
+    const filtered = ordersData.filter((order) => {
+      if (!param) return true;
+      if (searchMode === "combo") {
+        if (!isNum) return false;
+        const combos = getOrderComboNumbers(order);
+        return combos.includes(parsedNum);
+      }
+
+      return (
+        order.user_whatsapp.includes(param) || order.user_name.includes(param)
+      );
+    });
+
     setTableOrders(sortOrders(filtered));
-  }, [searchParam, ordersData]);
+  }, [searchParam, ordersData, sortOrders, searchMode]);
 
   // Auto-refetch orders data periodically (every 8 seconds)
   useEffect(() => {
@@ -274,9 +316,19 @@ function OrdersSection({ pricePerSheet }) {
               <input
                 type="search"
                 id="orders-search"
-                placeholder="Buscar... (WhatsApp/Nombre)"
+                placeholder={
+                  searchMode === "combo"
+                    ? "Buscar combo..."
+                    : "Buscar... (WhatsApp/Nombre)"
+                }
+                value={searchInput}
                 onChange={handleOnChangeOrdersSearch}
               />
+            </li>
+            <li>
+              <button type="button" id="toggleSearchMode" onClick={toggleSearchMode}>
+                Buscar por {searchMode === "combo" ? "WhatsApp/Nombre" : "Combo"}
+              </button>
             </li>
             <li>
               <button
@@ -339,7 +391,7 @@ function OrdersSection({ pricePerSheet }) {
                       >
                         <td>{order.user_name}</td>
                         <td>{order.user_whatsapp}</td>
-                        <td>
+                        <td onClick={(e) => { e.stopPropagation(); handleClickShowDownloadModal(order); }} style={{ cursor: 'pointer' }}>
                           {formatComboNumbers(getOrderComboNumbers(order)) ||
                             order.sheet_count}
                         </td>
@@ -370,6 +422,14 @@ function OrdersSection({ pricePerSheet }) {
           setIsValidating={setIsValidating}
           validateOrder={validateOrder}
           deleteOrder={deleteOrder}
+        />
+      )}
+
+      {isDownloadModalOpen && downloadOrderIndex !== null && (
+        <DownloadCombosModal
+          order={tableOrders[downloadOrderIndex]}
+          setIsOpen={setIsDownloadModalOpen}
+          orderComboNumbers={getOrderComboNumbers(tableOrders[downloadOrderIndex])}
         />
       )}
     </>

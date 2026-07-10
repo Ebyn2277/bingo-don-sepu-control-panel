@@ -83,7 +83,7 @@
 .modal-tickets-container {
   min-width: 100%;
 
-  li {
+  > li {
     display: inline-block;
   }
 }

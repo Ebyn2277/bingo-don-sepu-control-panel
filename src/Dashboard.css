@@ -59,15 +59,15 @@
   grid-column: span 2;*/
   width: 100%;
   overflow: auto;
-  order: -1;
+  order: 15;
 }
 
 .payment-gateway-section {
-  order: 3;
+  order: 30;
 }
 
 .game-settings-section {
-  order: 9;
+  order: 1;
 }
 
 .section-header {
